@@ -9,4 +9,4 @@ Chuwen Li: https://github.com/lixx4228/Stats506_public
 
 ### Proposal
 
-Proposal.docx - the draft of proposal document.
+Proposal(draft).md - the draft of proposal document.
