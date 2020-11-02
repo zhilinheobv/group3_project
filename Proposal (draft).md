@@ -73,8 +73,9 @@ NSE India: [Link](https://www.nseindia.com/)
  values)
  - Plot the data and construct the model (Which attributes we want to use, like
  which one is the output/response and which one(s) are the input.
- - A sample model can be expressed as: $y_t= 2X_{t-1}-X_{t-2}$, where X is the
- matrix containing the predictors **Prev Close** and **Volume**.
+ - A sample model can be expressed as: y<sub>t</sub>= 2X<sub>t-1</sub>-
+ X<sub>t-2</sub>, where X is the matrix containing the predictors
+ **Prev Close** and **Volume**.
  - Model selection can be done by selecting by AICs or BICs.
  - Estimate the model coefficients by various methods like MLE and LR ratio,
  and construct confidence intervals.
