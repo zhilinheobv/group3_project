@@ -51,8 +51,9 @@ NSE India: [Link](https://www.nseindia.com/)
  
 ## Question
  
- **What’s the seasonal and annual trend for prices of the nifty 50 stocks since
-2000?**
+ - **What’s the seasonal and annual trend for prices of the nifty 50 stocks
+ since 2000?**
+ - **How does other factors affect prices of the nifty 50 stocks?**
  
 ## Packages used
  
