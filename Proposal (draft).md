@@ -48,13 +48,14 @@ NSE India: [Link](https://www.nseindia.com/)
  
 ## Question
  
- **What’s the seasonal trend for prices and turnovers of the nifty 50 stocks?**
+ **What’s the seasonal and annual trend for prices of the nifty 50 stocks since
+2000?**
  
 ## Packages used
  
  - Python: numpy, pandas, matplotlib, scipy, sklearn
- - R:
- - Stata:
+ - R: forecast, ggplot2, 
+ - Stata: outreg2, 
 
 ## Models
 
