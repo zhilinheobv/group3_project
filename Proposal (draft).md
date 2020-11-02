@@ -3,7 +3,7 @@
 ## Topic: Regression topics for time series data
 
  - Data manipulation: importing, formatting, or otherwise working with dates
-and/or date-times, de-trending
+and/or date-times, possibly de-trending
  - Estimating regression coefficients and comparing models (Polynomial
  Regression vs Cubic Spline vs ARIMA)
  - I/O related topics: web-scraping or otherwise working with data from markup
@@ -74,8 +74,9 @@ NSE India: [Link](https://www.nseindia.com/)
  - Determining which dataset(s) to use and which attributes to use.
  - Data cleaning. Handling Missing values (If the attribute(s) contains missing
  values)
- - Plot the data to view the trend and determine de-trend stategy.
- - Construct the models and plot them together.
+ - Plot the data to view the trend.
+ - Construct the models and plot them together. De-trending could be used to
+ fit the data better.
  - A sample model can be expressed as: y<sub>t</sub> =
 2X<sub>t-1</sub>-X<sub>t-2</sub>, where X is the matrix containing the
 predictors **Prev Close** and **Volume**.
