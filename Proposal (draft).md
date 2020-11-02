@@ -8,6 +8,12 @@ and/or date-times
 - I/O related topics: web-scraping or otherwise working with data from markup
 languages (html, xml, json, etc)
 
+## Group Members and Languages
+
+ - Zhilin He (Python)
+ - Chuwen Li (R)
+ - Jialun Li (Stata)
+
 ## Data
 
 ### Dataset
@@ -38,23 +44,16 @@ NSE India: [Link](https://www.nseindia.com/)
 | Trades | Number of Trades (Half missing) |
 | Deliverable Volume | Amount of deliverable volume (7\% missing) |
 | \%Deliverable | \%Deliverable (7\% missing) |
-
-
-## Languages
-
- - Zhilin He (Python)
- - Chuwen Li (R)
- - Jialun Li (Stata)
  
- ## Collaboration plan
+## Collaboration plan
  
  - Communicate using Google Docs and the GitHub repository
  
- ## Question
+## Question
  
  **What’s the seasonal trend for prices and turnovers of the nifty 50 stocks?**
  
- ## Packages
+## Packages used
  
  - Python: numpy, pandas, matplotlib, scipy, sklearn
  - R:
@@ -74,18 +73,18 @@ NSE India: [Link](https://www.nseindia.com/)
  - Plot the data and construct the model (Which attributes we want to use, like
  which one is the output/response and which one(s) are the input.
  - A sample model can be expressed as: y<sub>t</sub>= 2X<sub>t-1</sub>-
- X<sub>t-2</sub>, where X is the matrix containing the predictors
- **Prev Close** and **Volume**.
+X<sub>t-2</sub>, where X is the matrix containing the predictors **Prev Close**
+and **Volume**.
  - Model selection can be done by selecting by AICs or BICs.
  - Estimate the model coefficients by various methods like MLE and LR ratio,
  and construct confidence intervals.
  - Re-evaluate the model by statistical tests.
  
- ## References
+## References
  
- A modern Time Series tutorial:
- [Link](https://www.kaggle.com/rohanrao/a-modern-time-series-tutorial)
+A modern Time Series tutorial:
+[Link](https://www.kaggle.com/rohanrao/a-modern-time-series-tutorial)
  
- ARIMA model in Wikipedia:
- [Link](https://en.wikipedia.org/wiki/Autoregressive_integrated_moving_average)
+ARIMA model in Wikipedia:
+[Link](https://en.wikipedia.org/wiki/Autoregressive_integrated_moving_average)
 
