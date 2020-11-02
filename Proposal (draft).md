@@ -2,11 +2,14 @@
 
 ## Topic: Regression topics for time series data
 
-- Data manipulation: importing, formatting, or otherwise working with dates
-and/or date-times
-- Estimating regression coefficients
-- I/O related topics: web-scraping or otherwise working with data from markup
+ - Data manipulation: importing, formatting, or otherwise working with dates
+and/or date-times, de-trending
+ - Estimating regression coefficients and comparing models (Polynomial
+ Regression vs Cubic Spline vs ARIMA)
+ - I/O related topics: web-scraping or otherwise working with data from markup
 languages (html, xml, json, etc)
+ - Graphics
+
 
 ## Group members and languages
 
@@ -60,23 +63,26 @@ NSE India: [Link](https://www.nseindia.com/)
 ## Models
 
  - Handling Missing Values: Variable deletion and linear interpolation
- - Main model for interpretation and prediction: Autoregressive integrated
- moving average model
+ - Main model for interpretation and prediction:
+     - Polynomial regression
+     - Cubic spline regression
+     - Autoregressive integrated moving average model
 
 ## Outline
 
  - Determining which dataset(s) to use and which attributes to use.
  - Data cleaning. Handling Missing values (If the attribute(s) contains missing
  values)
- - Plot the data and construct the model (Which attributes we want to use, like
- which one is the output/response and which one(s) are the input.
+ - Plot the data to view the trend and determine de-trend stategy.
+ - Construct the models and plot them together.
  - A sample model can be expressed as: y<sub>t</sub> =
 2X<sub>t-1</sub>-X<sub>t-2</sub>, where X is the matrix containing the
 predictors **Prev Close** and **Volume**.
  - Model selection can be done by selecting by AICs or BICs.
  - Estimate the model coefficients by various methods like MLE and LR ratio,
  and construct confidence intervals.
- - Re-evaluate the model by statistical tests.
+ - Model comparison: AICs, residual plots
+ - Re-evaluate the models by statistical tests.
  
 ## References
  
