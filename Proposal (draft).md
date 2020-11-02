@@ -12,12 +12,12 @@ languages (html, xml, json, etc)
 
 ### Dataset
 
-Nifty 50 time series data
+Nifty 50 time series data:
 [Link](https://www.kaggle.com/rohanrao/nifty50-stock-market-data)
 
 ### Source
 
-NSE India [Link](https://www.nseindia.com/)
+NSE India: [Link](https://www.nseindia.com/)
 
 ### Variable descriptions
 
@@ -73,8 +73,8 @@ NSE India [Link](https://www.nseindia.com/)
  values)
  - Plot the data and construct the model (Which attributes we want to use, like
  which one is the output/response and which one(s) are the input.
- - A sample model can be expressed as: yt= 2xt-1-xt-2, where X is the matrix of
- Prev Close and Volume).
+ - A sample model can be expressed as: y_t= 2X_t-1-X_t-2, where X is the matrix of
+ Prev Close and Volume.
  - Model selection can be done by selecting by AICs or BICs.
  - Estimate the model coefficients by various methods like MLE and LR ratio,
  and construct confidence intervals.
