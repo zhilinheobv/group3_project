@@ -58,13 +58,13 @@ NSE India: [Link](https://www.nseindia.com/)
 ## Packages used
  
  - Python: numpy, pandas, matplotlib, scipy, sklearn
- - R: forecast, ggplot2, 
- - Stata: outreg2, 
+ - R: forecast, ggplot2, tidyverse (dplyr), splinef, ggplot2
+ - Stata: outreg2, asdoc
 
 ## Models
 
  - Handling Missing Values: Variable deletion and linear interpolation
- - Main model for interpretation and prediction:
+ - Main models for interpretations and predictions:
      - Polynomial regression
      - Cubic spline regression
      - Autoregressive integrated moving average model
@@ -82,7 +82,7 @@ predictors **Prev Close** and **Volume**.
  - Model selection can be done by selecting by AICs or BICs.
  - Estimate the model coefficients by various methods like MLE and LR ratio,
  and construct confidence intervals.
- - Model comparison: AICs, residual plots
+ - Model comparison: AICs, residual plots.
  - Re-evaluate the models by statistical tests.
  
 ## References
