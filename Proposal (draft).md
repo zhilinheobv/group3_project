@@ -1,13 +1,10 @@
 # Group 3 Project Proposal
 
-## Topic: Regression topics for time series data
-
+## Topic: ARIMA models for Time-Series Data 
  - Data manipulation: importing, formatting, or otherwise working with dates
-and/or date-times, possibly de-trending
- - Estimating regression coefficients and comparing models (Polynomial
- Regression vs Cubic Spline vs ARIMA)
- - I/O related topics: web-scraping or otherwise working with data from markup
-languages (html, xml, json, etc)
+and/or date-times
+ - Estimating regression coefficients
+ - I/O related topic
  - Graphics
 
 
@@ -19,7 +16,7 @@ languages (html, xml, json, etc)
 
 ## Data
 
-### Dataset
+### Sample Dataset
 
 Nifty 50 time series data:
 [Link](https://www.kaggle.com/rohanrao/nifty50-stock-market-data)
@@ -53,21 +50,18 @@ NSE India: [Link](https://www.nseindia.com/)
  
  - **What’s the seasonal and annual trend for prices of the nifty 50 stocks
  since 2000?**
- - **How does other factors affect prices of the nifty 50 stocks?**
  
 ## Packages used
  
  - Python: numpy, pandas, matplotlib, scipy, sklearn
- - R: forecast, ggplot2, tidyverse (dplyr), splinef, ggplot2
+ - R: forecast, ggplot2, tidyverse (dplyr)
  - Stata: outreg2, asdoc (Commands: tabulate, summarize, graph, arima and anova)
 
 ## Models
 
  - Handling Missing Values: Variable deletion and linear interpolation
- - Main models for interpretations and predictions:
-     - Polynomial regression
-     - Cubic spline regression
-     - Autoregressive integrated moving average model
+ - Main models for interpretations and prediction: Autoregressive integrated
+ moving average model
 
 ## Outline
 
@@ -75,16 +69,14 @@ NSE India: [Link](https://www.nseindia.com/)
  - Data cleaning. Handling Missing values (If the attribute(s) contains missing
  values)
  - Plot the data to view the trend.
- - Construct the models and plot them together. De-trending could be used to
- fit the data better.
+ - Construct the model and plot it.
  - A sample model can be expressed as: y<sub>t</sub> =
 2X<sub>t-1</sub>-X<sub>t-2</sub>, where X is the matrix containing the
 predictors **Prev Close** and **Volume**.
  - Model selection can be done by selecting by AICs or BICs.
  - Estimate the model coefficients by various methods like MLE and LR ratio,
  and construct confidence intervals.
- - Model comparison: AICs, residual plots.
- - Re-evaluate the models by statistical tests.
+ - Re-evaluate the model by statistical tests.
  
 ## References
  
