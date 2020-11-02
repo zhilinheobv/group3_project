@@ -59,7 +59,7 @@ NSE India: [Link](https://www.nseindia.com/)
  
  - Python: numpy, pandas, matplotlib, scipy, sklearn
  - R: forecast, ggplot2, tidyverse (dplyr), splinef, ggplot2
- - Stata: outreg2, asdoc
+ - Stata: outreg2, asdoc (Commands: tabulate, summarize, graph, arima and anova)
 
 ## Models
 
