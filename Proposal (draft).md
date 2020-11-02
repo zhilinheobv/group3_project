@@ -1,12 +1,10 @@
 # Group 3 Project Proposal
 
-## Topic: Regression topics for time series data
+## Topic: Splines Functions in Time Series Regression
 
-- Data manipulation: importing, formatting, or otherwise working with dates
-and/or date-times
-- Estimating regression coefficients
-- I/O related topics: web-scraping or otherwise working with data from markup
-languages (html, xml, json, etc)
+- De-trend
+- Polynomial Regression vs Cubic Spline vs ARIMA
+- Graphic
 
 ## Group members and languages
 
@@ -18,65 +16,55 @@ languages (html, xml, json, etc)
 
 ### Dataset
 
-Nifty 50 time series data:
-[Link](https://www.kaggle.com/rohanrao/nifty50-stock-market-data)
+Volumes of Microsoft Traded (6M):
+[Link](https://www.nasdaq.com/api/v1/historical/MSFT/stocks/2020-05-02/2020-11-02)
 
 ### Source
 
-NSE India: [Link](https://www.nseindia.com/)
+Nasdaq: [Link](https://www.nasdaq.com/market-activity/stocks/msft/historical)
 
 ### Variable descriptions
 
 | Variables Name   |Variable Description     |
 | ------------- |:-------------:|
 | Date   | Date               |
-| Symbol | Symbol of the stock (name, identifier)  |
-| Series | Type of security (“EQ” for all rows)   |
-| Prev Close | Previous day's close price |
+| Close/Last | Close/Last traded price of day |
+| Volume | Volume |
 | Open | Open price of day |
 | High | Highest price in day |
 | Low | Lowest price in day |
-| Last | Last traded price in day |
-| Close | Close price of day |
-| VWAP | Volume Weighted Average Price |
-| Volume | Volume |
-| Turnover | Turnover |
-| Trades | Number of Trades (Half missing) |
-| Deliverable Volume | Amount of deliverable volume (7\% missing) |
-| \%Deliverable | Percent of deliverable volume (7\% missing) |
  
  
 ## Question
  
- **What’s the seasonal and annual trend for prices of the nifty 50 stocks since
-2000?**
+ **What’re the differences among Polynomial Regression, Cubic Spline, 
+ and ARIMA in terms of the data fitting and forecasting?**
  
 ## Packages used
  
  - Python: numpy, pandas, matplotlib, scipy, sklearn
- - R: forecast, ggplot2, 
+ - R: dplyr, forecast, astsa, splinef, ggplot2, 
  - Stata: outreg2, 
 
 ## Models
 
- - Handling Missing Values: Variable deletion and linear interpolation
- - Main model for interpretation and prediction: Autoregressive integrated
- moving average model
+ - 3 models for comparison: 
+   - Polynomial Regression
+   - Cubic Spline
+   - Autoregressive integrated moving average model (ARIMA)
 
 ## Outline
 
- - Determining which dataset(s) to use and which attributes to use.
  - Data cleaning. Handling Missing values (If the attribute(s) contains missing
  values)
- - Plot the data and construct the model (Which attributes we want to use, like
- which one is the output/response and which one(s) are the input.
- - A sample model can be expressed as: y<sub>t</sub> =
+ - Plot the data to view the trend and determine de-trend stategy
+ - Construct 3 models and plot them together
+   - A sample model can be expressed as: y<sub>t</sub> =
 2X<sub>t-1</sub>-X<sub>t-2</sub>, where X is the matrix containing the
 predictors **Prev Close** and **Volume**.
- - Model selection can be done by selecting by AICs or BICs.
- - Estimate the model coefficients by various methods like MLE and LR ratio,
- and construct confidence intervals.
- - Re-evaluate the model by statistical tests.
+ - Model comparison: AICs, residual plots
+
+
  
 ## References
  
