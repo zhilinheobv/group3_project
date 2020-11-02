@@ -8,7 +8,7 @@ and/or date-times
 - I/O related topics: web-scraping or otherwise working with data from markup
 languages (html, xml, json, etc)
 
-## Group Members and Languages
+## Group members and languages
 
  - Zhilin He (Python)
  - Chuwen Li (R)
@@ -45,9 +45,6 @@ NSE India: [Link](https://www.nseindia.com/)
 | Deliverable Volume | Amount of deliverable volume (7\% missing) |
 | \%Deliverable | Percent of deliverable volume (7\% missing) |
  
-## Collaboration plan
- 
- - Communicate using Google Docs and the GitHub repository
  
 ## Question
  
