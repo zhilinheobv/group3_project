@@ -9,4 +9,8 @@ Chuwen Li: https://github.com/lixx4228/Stats506_public
 
 ### Proposal
 
-Proposal(draft).md - the draft of proposal document.
+Proposal.md - Proposal document.
+
+### Data
+
+NIFTY50_all.csv - The data used for the project.
