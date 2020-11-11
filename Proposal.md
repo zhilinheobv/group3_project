@@ -1,6 +1,6 @@
 # Group 3 Project Proposal
 
-## Topic: ARIMA models for Time-Series Data 
+## Topic: ARIMA models for Time-Series Data
  - Data manipulation: importing, formatting, or otherwise working with dates
 and/or date-times
  - Estimating regression coefficients
@@ -44,15 +44,15 @@ NSE India: [Link](https://www.nseindia.com/)
 | Trades | Number of Trades (Half missing) |
 | Deliverable Volume | Amount of deliverable volume (7\% missing) |
 | \%Deliverable | Percent of deliverable volume (7\% missing) |
- 
- 
+
+
 ## Question
- 
+
  - **What’s the seasonal and annual trend for prices of the nifty 50 stocks
  since 2000?**
- 
+
 ## Packages used
- 
+
  - Python: numpy, pandas, matplotlib, scipy, sklearn
  - R: forecast, ggplot2, tidyverse (dplyr)
  - Stata: outreg2, asdoc (Commands: tabulate, summarize, graph, arima and anova)
@@ -77,12 +77,11 @@ predictors **Prev Close** and **Volume**.
  - Estimate the model coefficients by various methods like MLE and LR ratio,
  and construct confidence intervals.
  - Re-evaluate the model by statistical tests.
- 
+
 ## References
- 
+
 A modern Time Series tutorial:
 [Link](https://www.kaggle.com/rohanrao/a-modern-time-series-tutorial)
- 
+
 ARIMA model in Wikipedia:
 [Link](https://en.wikipedia.org/wiki/Autoregressive_integrated_moving_average)
-
