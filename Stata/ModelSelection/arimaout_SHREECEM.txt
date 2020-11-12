@@ -1,0 +1,13 @@
+	(1)	(2)	(3)
+VARIABLES	vwap	ARMA	sigma
+			
+L.ar		1.000***	
+		(0.000236)	
+L.ma		0.0229***	
+		(0.00683)	
+Constant	8,716		139.8***
+	(9,515)		(0.470)
+			
+Observations	4,842	4,842	4,842
+Standard errors in parentheses			
+*** p<0.01, ** p<0.05, * p<0.1			
