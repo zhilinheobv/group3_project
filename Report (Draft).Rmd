@@ -1,0 +1,94 @@
+---
+title: "Stats 506 F20, Group Project"
+subtitle: "ARIMA Model Tutorial"
+author: "Group 3: Zhilin He, Jialun Li, Chuwen Li"
+date: "`r format.Date(Sys.Date(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: true
+    theme: cerulean
+---
+
+```{r setup, include=FALSE}
+# 79: -------------------------------------------------------------------------
+#! We generally don't need to see the code in the results document.
+knitr::opts_chunk$set(echo = FALSE)
+#! Make sure all chunks have a label. This one is labelled 'setup'.
+```
+
+## Introduction
+
+ARIMA models are good. (This is a stub.)
+
+
+## Data Description
+
+We use the [nifty fifty stocks data]
+(https://www.kaggle.com/rohanrao/nifty50-stock-market-data) from NSE India as 
+an example in this tutorial.
+
+```{r dataset, include=FALSE}
+nifty = read.csv('./NIFTY50_all.csv')
+```
+
+The data contains daily open, close, highest and lowest prices, volume and 
+other relevant information for the "Nifty Fifty" stocks since January 2000. 
+There are 50 stocks, 15 variables and 230104 observations in total. Detailed 
+variable descriptions are shown in Table 1 below.
+
+| Variables Name   |Variable Description     |
+| ------------- |:-------------:|
+| Date   | Date               |
+| Symbol | Symbol of the stock (name, identifier)  |
+| Series | Type of security (“EQ” for all rows)   |
+| Prev Close | Previous day's close price |
+| Open | Open price of day |
+| High | Highest price in day |
+| Low | Lowest price in day |
+| Last | Last traded price in day |
+| Close | Close price of day |
+| VWAP | Volume Weighted Average Price |
+| Volume | Volume |
+| Turnover | Turnover |
+| Trades | Number of Trades (Half missing) |
+| Deliverable Volume | Amount of deliverable volume (7\% missing) |
+| \%Deliverable | Percent of deliverable volume (7\% missing) |
+<center>
+**Table 1**. Variables in the dataset
+</center>
+
+Each variable other than <code>Date</code>, <code>Symbol</code> and 
+<code>Series</code> is a time series starting from January 3rd, 2000 to
+September 30th, 2020. Missing data is a problem in this dataset, so we try to
+deal with missing data first. We can use ARIMA models to model these time
+series data. We are going to show how to build ARIMA models in Python, R and
+Stata respectively. 
+
+As we are more interested in the stock prices, we use the variable
+<code>VWAP</code> for the most part. It can summarize the average price of the
+stock on a trading day. We want to catch the trend of stock prices across the
+years and possibly forecast future stock prices.
+
+## Core Example {.tabset .tabset-pills}
+
+### Python
+
+```{python echo=FALSE}
+```
+
+### R
+
+### Stata
+
+## To-do list
+
+
+<!-- ## Summary -->
+
+## References
+
+1. A modern Time Series tutorial:
+[Link](https://www.kaggle.com/rohanrao/a-modern-time-series-tutorial)
+
+2. ARIMA model in Wikipedia:
+[Link](https://en.wikipedia.org/wiki/Autoregressive_integrated_moving_average)
