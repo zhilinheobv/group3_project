@@ -59,9 +59,11 @@ graph export candlechart.png, width(1920) height(1080)
 
 * compute the autocorrelation and partial autocrrelation plots
 
-levelsof(symbol), local(stocksymbols)
+use NIFTY_clean, clear
 
-foreach sym of local stocksymbols {
+global stocksymbols "EICHERMOT INFOSYSTCH NESTLEIND SHREECEM"
+
+foreach sym of global stocksymbols {
 	use NIFTY_clean, clear
 	display "`sym'"
 	keep if symbol == "`sym'"
@@ -74,20 +76,31 @@ foreach sym of local stocksymbols {
 	arima vwap, ar(1)
 	estat ic
 	mat l1 = r(S)
+	scalar aic_1 = l1[1,5]
+	scalar bic_1 = l1[1,6]
 	arima vwap, ar(2)
 	estat ic
 	mat l2 = r(S)
+	scalar aic_2 = l2[1,5]
+	scalar bic_2 = l2[1,6]
 	arima vwap, ar(1) ma(1)
 	estat ic
 	mat l3 = r(S)
+	scalar aic_3 = l3[1,5]
+	scalar bic_3 = l3[1,6]
 	putexcel set model_selection_`sym', replace
 	putexcel A1 = "Model Description"
 	putexcel A2 = "AR(1) Model"
 	putexcel A3 = "AR(2) Model"
 	putexcel A4 = "ARMA(1,1) Model"
-	putexcel B2 = l1
-	putexcel B3 = l2
-	putexcel B4 = l3
+	putexcel B1 = "AIC"
+	putexcel C1 = "BIC"
+	putexcel B2 = aic_1
+	putexcel B3 = aic_2
+	putexcel B4 = aic_3
+	putexcel C2 = bic_1
+	putexcel C3 = bic_2
+	putexcel C4 = bic_3
 	putexcel clear
 }
 
@@ -95,16 +108,13 @@ foreach sym of local stocksymbols {
 
 use NIFTY_clean, clear
 
-levelsof(symbol), local(stocksymbols)
-
-foreach sym of local stocksymbols {
+foreach sym of global stocksymbols {
 	use NIFTY_clean, clear
 	keep if symbol == "`sym'"
 	tsset date
 	arima vwap, ar(1) ma(1)
 	outreg2 using arimaout_`sym'.docx
 	predict vwap_p
-	/// TODO: The line below is too long
 	graph twoway line vwap date, lwidth("vthin") color("blue") || line vwap_p date, lwidth("vthin") color("red") lpattern("dash")
 	graph export fitted_`sym'.png
 }
