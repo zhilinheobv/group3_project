@@ -27,15 +27,17 @@
 
 ![candlechart](candlechart.png)
 
+  Also, the numerical analysis for high, low, open, close and volume weighted average price can be found in *summary.xlsx* (means and standard deviations)
+
 #### Model Selection
 
   After looking at the candle charts, four specific stock symbols are selected and they are: *EICHERMOT*, *INFOSYSTCH*, *NESTLEIND* and *SHREECEM*. This is because their data is more complete than others. Also, their prices all experience huge up and downs, which can be great to test the robustness of our model.
 
   We first graph the autocorrelation and partial autocorrelation for the volume weighted average price in different symbols and the result is stored in the *acf&pacf* folder. Sample graphs for these are (*EICHERMOT* case):
 
-![acf_EICHERMOT](acf&pacf\acf_EICHERMOT.png)
+![acf_EICHERMOT](.\acf&pacf\acf_EICHERMOT.png)
 
-![pacf_EICHERMOT](acf&pacf\pacf_EICHERMOT.png)
+![pacf_EICHERMOT](.\acf&pacf\pacf_EICHERMOT.png)
 
   After examing all the acf and pacf graphs, I decide to use these models for further model testing:
 
@@ -51,7 +53,7 @@
 
   It turns out that the ARMA(1,1) model gives the smallest AIC and BIC in almost all four cases. Hence it is chosen to fit the model. The fitted plots can be found in the *FittedPlots* folder and a sample output is (*EICHERMOT* case):
 
-![fitted_EICHERMOT](FittedPlots\fitted_EICHERMOT.png)
+![fitted_EICHERMOT](.\FittedPlots\fitted_EICHERMOT.png)
 
 
 ### TODO List
