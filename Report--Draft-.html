@@ -393,7 +393,11 @@ summary {
 
 <div id="TOC">
 <ul>
-<li><a href="#introduction">Introduction</a></li>
+<li><a href="#introduction">Introduction</a>
+<ul>
+<li><a href="#general">General</a></li>
+<li><a href="#mathematical-model">Mathematical Model</a></li>
+</ul></li>
 <li><a href="#data-description">Data Description</a></li>
 <li><a href="#core-example">Core Example</a>
 <ul>
@@ -402,13 +406,24 @@ summary {
 <li><a href="#stata">Stata</a></li>
 </ul></li>
 <li><a href="#to-do-list">To-do list</a></li>
+<li><a href="#outline">Outline</a></li>
 <li><a href="#references">References</a></li>
 </ul>
 </div>
 
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>ARIMA models are good. (This is a stub.)</p>
+<div id="general" class="section level3">
+<h3>General</h3>
+<p>Time series data can be modeled in a variety of ways. Autoregressive integrated moving average (ARIMA) model is a common type of model used for time series data.</p>
+<p>A general ARIMA model consists of three parts: the “AR” part means the variable of interest is regressed on its lag terms, the “I” part means the differenced values are used, and the “MA” part means the regression error is modelled as a linear combination of error terms in the past. The purpose of using differenced terms is to make the time series stationary for autoregression.</p>
+<p>ARIMA models are fitted in order to understand the data better and forecast future data. They are based on linear regression models. The best model can be chosen using AIC or BIC.</p>
+</div>
+<div id="mathematical-model" class="section level3">
+<h3>Mathematical Model</h3>
+<p>Given a time series <span class="math inline">\(\{X_t\}\)</span>, an <span class="math inline">\(ARIMA(p, d, q)\)</span> model can be expressed as: <span class="math display">\[(1-\sum_{i=1}^p\phi_iL^i)(1-L)^dX_t=
+(1+\sum_{i=1}^q\theta_iL^i)\epsilon_t + \delta\]</span> where <span class="math inline">\(\epsilon_t\)</span> is the error term, <span class="math inline">\(L\)</span> is the lag operator, i.e. <span class="math inline">\(LX_t = X_{t-1}, \forall t&gt;1\)</span>, <span class="math inline">\(p\)</span> is the number of lagged terms of <span class="math inline">\(X\)</span>, <span class="math inline">\(d\)</span> is the number of times of differencing needed for stationarity, <span class="math inline">\(q\)</span> is the number of lagged forecast errors in prediction, <span class="math inline">\(\delta\)</span> is the interception term for the regression, and <span class="math inline">\(\theta, \phi\)</span>’s are the estimated regression coefficients.</p>
+</div>
 </div>
 <div id="data-description" class="section level2">
 <h2>Data Description</h2>
@@ -487,7 +502,7 @@ summary {
 <center>
 <strong>Table 1</strong>. Variables in the dataset
 </center>
-<p>Each variable other than <code>Date</code>, <code>Symbol</code> and <code>Series</code> is a time series starting from January 3rd, 2000 to September 30th, 2020. Missing data is a problem in this dataset, so we try to deal with missing data first. We can use ARIMA models to model these time series data. We are going to show how to build ARIMA models in Python, R and Stata respectively.</p>
+<p>Each variable other than <code>Date</code>, <code>Symbol</code> and <code>Series</code> is a daily time series starting from January 3rd, 2000 to September 30th, 2020. Missing data is a problem in this dataset, so we try to deal with missing data first. We can use ARIMA models to model these time series data. We are going to show how to build ARIMA models in Python, R and Stata respectively.</p>
 <p>As we are more interested in the stock prices, we use the variable <code>VWAP</code> for the most part. It can summarize the average price of the stock on a trading day. We want to catch the trend of stock prices across the years and possibly forecast future stock prices.</p>
 </div>
 <div id="core-example" class="section level2 tabset tabset-pills">
@@ -504,6 +519,9 @@ summary {
 </div>
 <div id="to-do-list" class="section level2">
 <h2>To-do list</h2>
+</div>
+<div id="outline" class="section level2">
+<h2>Outline</h2>
 <!-- ## Summary -->
 </div>
 <div id="references" class="section level2">

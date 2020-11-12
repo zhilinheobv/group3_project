@@ -18,8 +18,33 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Introduction
 
-ARIMA models are good. (This is a stub.)
+### General
 
+Time series data can be modeled in a variety of ways. Autoregressive integrated
+moving average (ARIMA) model is a common type of model used for time series 
+data.
+
+A general ARIMA model consists of three parts: the "AR" part means the variable
+of interest is regressed on its lag terms, the "I" part means the differenced
+values are used, and the "MA" part means the regression error is modelled as a
+linear combination of error terms in the past. The purpose of using differenced
+terms is to make the time series stationary for autoregression.
+
+ARIMA models are fitted in order to understand the data better and forecast
+future data. They are based on linear regression models. The best model can
+be chosen using AIC or BIC.
+
+### Mathematical Model
+
+Given a time series \(\{X_t\}\), an \(ARIMA(p, d, q)\) model can be expressed
+as: $$(1-\sum_{i=1}^p\phi_iL^i)(1-L)^dX_t=
+(1+\sum_{i=1}^q\theta_iL^i)\epsilon_t + \delta$$
+where \(\epsilon_t\) is the error term, \(L\) is the lag operator, i.e.
+\(LX_t = X_{t-1}, \forall t>1\), \(p\) is the number of lagged terms of \(X\),
+\(d\) is the number of times of differencing needed for stationarity,
+\(q\) is the number of lagged forecast errors in prediction, \(\delta\)
+is the interception term for the regression, and \(\theta, \phi\)'s are 
+the estimated regression coefficients.
 
 ## Data Description
 
@@ -58,7 +83,7 @@ variable descriptions are shown in Table 1 below.
 </center>
 
 Each variable other than <code>Date</code>, <code>Symbol</code> and 
-<code>Series</code> is a time series starting from January 3rd, 2000 to
+<code>Series</code> is a daily time series starting from January 3rd, 2000 to
 September 30th, 2020. Missing data is a problem in this dataset, so we try to
 deal with missing data first. We can use ARIMA models to model these time
 series data. We are going to show how to build ARIMA models in Python, R and
@@ -81,6 +106,10 @@ years and possibly forecast future stock prices.
 ### Stata
 
 ## To-do list
+
+## Outline
+
+
 
 
 <!-- ## Summary -->
