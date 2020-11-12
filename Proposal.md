@@ -52,13 +52,8 @@ NSE India: [Link](https://www.nseindia.com/)
  since 2000?**
 
 ## Packages used
-<<<<<<< HEAD
  
  - Python: numpy, pandas, matplotlib, statsmodels, sklearn, pmdarima
-=======
-
- - Python: numpy, pandas, matplotlib, scipy, sklearn
->>>>>>> a5a6bbc4791ca489b3a015399e6c9db140780ed0
  - R: forecast, ggplot2, tidyverse (dplyr)
  - Stata: outreg2, asdoc (Commands: tabulate, summarize, graph, arima and anova)
 
