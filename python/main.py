@@ -2,7 +2,7 @@
 # Stats 506 midterm project
 # ARIMA model for time series data
 # Author: Zhilin he, Group 3
-# Updated: November 9, 2020
+# Updated: November 12, 2020
 # ------------------------------------
 
 ## Import data
@@ -75,12 +75,11 @@ for i in range(4):
     plot_pacf(subdf['VWAP'].diff().dropna(), ax=ax[i])
     ax[i].set_title('PACF plot for stock %s' % names[i])
 plt.savefig('p2.png')
-# Lag 1 is at least borderline significant for all 3 stocks.
+# Lag 1 is at least borderline significant for all stocks.
 # We can choose 1 as the order of AR term.
 
 ## Determine the order of the MA term
 
-fig, ax = plt.subplots(1, 4, figsize=(15, 5))
 # Take the stocks 5-8 as a sample
 fig, ax = plt.subplots(1, 4, figsize=(15, 5))
 for i in range(4):
