@@ -1,0 +1,315 @@
+---
+title: "Stats 506 F20, Group Project"
+subtitle: "ARIMA models for Time-Series Data"
+author: "Group 3: Zhilin He, Jialun Li, Chuwen Li"
+date: "`r format.Date(Sys.Date(), '%B %d, %Y')`"
+output:
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+---
+
+-----------
+
+```{r , echo = FALSE, warning = FALSE, message = FALSE}
+# this block loads R packages that may be needed for the analysis.
+library(dplyr)
+library(ggplot2)
+```
+
+```{r , echo = FALSE, warning = FALSE, message = FALSE}
+# load data
+url = 'https://raw.githubusercontent.com/lixx4228/Stats506_group3/main'
+nifty = readr::read_delim(sprintf('%s/NIFTY50_all.csv', url), delim = ',')
+
+```
+
+# Introduction
+
+This project is a tutorial of using multivaraite time series analysis for the 
+stock market index, NIFTY 50 from NSE (National Stock Exchange) India. The 
+data is obtained from 
+[Nifty 50](https://www.kaggle.com/rohanrao/nifty50-stock-market-data) 
+contains price history and trading volumes of fifty stocks in India from 
+2000-01-03 to 2020-09-30. 
+
+We illustrates how to using Python, R, and Stata to apply Auto Regressive 
+Integrated Moving Average (ARIMA) to time series data. ARIMA is able to fit 
+a given non-seasonal non-stationary time series based on its lag values.
+A general ARIMA model consists of three parts: the "AR" part means the variable
+of interest is regressed on its lag terms, the "I" part means the differenced
+values are used, and the "MA" part means the regression error is modelled as a
+linear combination of error terms in the past. The purpose of using differenced
+terms is to make the time series stationary for autoregression.
+
+An ARIMA model is characterized by 3 terms: p (the order of AR term), q 
+(the order of the MA term), and d (number of differencing to make time series 
+stationary). Given a time series \(\{X_t\}\), an \(ARIMA(p, d, q)\) model 
+can be expressed as: 
+$$(1-\sum_{i=1}^p\phi_iL^i)(1-L)^dX_t=
+(1+\sum_{i=1}^q\theta_iL^i)\epsilon_t + \delta$$
+where \(\epsilon_t\) is the error term, \(L\) is the lag operator, i.e.
+\(LX_t = X_{t-1}, \forall t>1\), \(p\) is the number of lagged terms of \(X\),
+\(d\) is the number of times of differencing needed for stationarity,
+\(q\) is the number of lagged forecast errors in prediction, \(\delta\)
+is the interception term for the regression, and \(\theta, \phi\)'s are 
+the estimated regression coefficients.
+
+ARIMA models are fitted in order to understand the data better and forecast
+future data. They are based on linear regression models. The best model can
+be chosen using AIC or BIC.
+
+In Section 2 We cleaned the dataset and conducted basic data exploratory 
+analysis to see whether there is non-stationarity (trend or seasonality) in 
+the time series prior to applying the ARIMA models. Section 3 has three 
+subsections, which illustrates using Python, R, and Stata for analysis 
+respectively. Section 4 gives the summary results and conclusion of this 
+tutorial.
+
+# Data Summary
+
+`NIFTY 50` data consist of 50 stocks, 230104 observations on 15 variables. 
+The data contains daily open, close, highest and lowest prices, volume and 
+other relevant information for the "Nifty Fifty" stocks since January 2000. 
+Detailed variable descriptions are shown in Table 1 below.
+
+
+```{r , echo = FALSE, warning = FALSE, message = FALSE}
+# variable description
+var_names = names(nifty)
+var_names[16] = "Return"
+tab1 = data.frame(name = var_names, 
+                  description = 
+                    c("Date of trade", "Name of the company",
+                      "We have only one series: Equity(EQ)",
+                     "Previous day's close price", "Open price of day",
+                     "Highest price in day", "Lowest price in day",
+                     "Last traded price in day", "Close price of day",
+                     "Volume Weighted Average Price",
+                     "A measure of sellers versus buyers of a particular stock", 
+                     "The number of shares available for sale",
+                     "The number of shares traded", 
+                  "Shares which are actually transferred among demat accounts",
+                  "Percent of deliverble volume",
+                  "Return of trade"))
+
+```
+
+<details>
+<summary> Click to see variable descriptions. </summary>
+```{r var_tab, echo = FALSE}
+tab.cap1 = '**Table 1**. *Varaibel descriptions of NIFTY 50 data*'
+col_names = c("Variable Name", "Variable Description")
+tab1 %>%
+  knitr::kable(format = 'html',  col.names = col_names, caption = tab.cap1) %>%
+  kableExtra::kable_styling('striped', full_width = TRUE) %>% 
+  kableExtra::column_spec(1, italic = T) 
+
+```
+</details>
+
+As we are more interested in the stock prices, we use the variable
+<code>VWAP</code> for the most part. It can summarize the average price of the
+stock on a trading day. We want to catch the trend of stock prices across the
+years and possibly forecast future stock prices.
+
+```{r clean_data, warning = FALSE, message = FALSE}
+library(dplyr)
+library(ggplot2)
+
+old_sym = c('MUNDRAPORT', 'UTIBANK', 'BAJAUTOFIN', 'BHARTI', 'HEROHONDA',
+       'HINDALC0', 'HINDLEVER', 'INFOSYSTCH', 'JSWSTL', 'KOTAKMAH', 'TELCO',
+       'TISCO', 'UNIPHOS', 'SESAGOA', 'SSLT', 'ZEETELE')
+new_sym = c('ADANIPORTS', 'AXISBANK', 'BAJFINANCE', 'BHARTIARTL', 'HEROMOTOCO',
+       'HINDALCO', 'HINDUNILVR', 'INFY', 'JSWSTEEL', 'KOTAKBANK', 'TATAMOTORS',
+       'TATASTEEL', 'UPL', 'VEDL', 'VEDL', 'ZEEL')
+
+# summary statistics of variable of interest
+nifty = nifty %>%
+  mutate(Symbol = lapply(Symbol, 
+                         function(x) replace(x, x %in% old_sym, new_sym)),
+         Trades = ifelse(is.na(Trades), 0, Trades),
+         Return = Close - `Prev Close`) %>% 
+  select(Date, Symbol, Return, VWAP, Volume, Trades)
+summary(nifty[, -2])
+```
+
+```{r trend, warning = FALSE, fig.cap = fig.cap1, fig.width = 6.8}
+# plot trend of all stocks
+fig.cap1 = "**Figure 1.** *Daily trend of all stocks, 2000-2020.*"
+
+nifty_ts = reshape2::melt(nifty[, -c(2)], id.vars = "Date")
+ggplot(nifty_ts, aes(x = Date, y = value)) + 
+    geom_line(color="lightblue") + 
+    theme_bw() +
+    facet_wrap(~ variable, scales = "free_y", ncol = 1)
+
+```
+
+From the trend of all stocks, we can see the time series exhibit 
+non-stationarity. There was a substantial strike to the India stock market 
+after the outbreak of Coronavirus.
+
+# Time Series Analysis {.tabset .tabset-fade .tabset-pills}
+
+## Python
+
+### Data cleaning and visualization
+
+
+## R
+
+### Autocorrelation Plots
+
+We will focus on the variables: `Symbol`, `VWAP`, `Volume`, `Trades` and a 
+newly created variable `Return`, which is the difference between `Close` and 
+`Prev Close`. First we choose one stock to analyze its autocorrelation of 
+trend on theabove four variables. The trend plot above shows large value of 
+`Volume`, sowe can take log to decrease its trend.
+
+```{r acf, warning = FALSE, message = FALSE, fig.cap = fig.cap2}
+library(forecast)
+
+candidate = "ADANIPORTS"
+
+nifty_cand = nifty %>% filter(Symbol == candidate) %>% 
+  mutate(Volume = log(Volume))
+
+vars_list = names(nifty_cand)[-c(1, 2)]
+fig.cap2 = "**Figure 2.** *ACF plots of stock: ADANIPORTS.*"
+
+par(mfrow=c(2,2))
+for ( var in vars_list ) {
+  df_ts = ts(nifty_cand[[var]], frequency = 1, start = c(2000, 01, 03))
+  # acf
+  acf_tou <- acf(df_ts, lag.max = 30, plot = FALSE)
+  plot(acf_tou, xlab = "Lag (in Year)", main = var)
+}
+
+```
+
+Notice that all the variables show high autocorrelation except for `Return`, 
+which is because `Return` is calculated from the first difference of closing 
+price working as a linear filter applied to eliminate a trend. Since we are 
+going to apply ARIMA model to the data, which can works for non-stationary 
+time series, we can leave the model to detrend time seires. For the 
+illustration purpose, we will take first difference of other three variables 
+and compare the autocorrelation plot to the previous one.
+
+```{r , echo=FALSE, warning=FALSE, message=FALSE}
+acf_diff_plot = function(df = nifty, sym = "ADANIPORTS") {
+  stopifnot( length(sym) == 1)
+  stopifnot( sym %in% df$Symbol)
+  
+  df = df %>% filter(Symbol == sym) %>% 
+    mutate(Volume = log(Volume))
+
+  vars_list = names(df)[-c(1, 2)]
+  par(mfrow=c(2,2))
+  for ( var in vars_list ) {
+    if (var != "Return"){
+    df_ts = ts(df[[var]], frequency = 1, start = c(2000, 01, 03))
+    df_ts = diff(df_ts, 1)
+    } else {
+    df_ts = ts(df[[var]], frequency = 1, start = c(2000, 01, 03))
+    }
+    # acf
+    acf_tou <- acf(df_ts, lag.max = 30, plot = FALSE)
+    plot(acf_tou, xlab = "Lag (in Year)", main = var)
+  }
+} 
+```
+
+```{r acf2, warning=FALSE, message=FALSE, fig.cap = fig.cap3}
+fig.cap3 = "**Figure 3.** *ACF plots of first difference of time seires.*"
+acf_diff_plot(df = nifty, sym = candidate)
+```
+
+### Fitting an ARIMA Model
+
+ We can choose the ARIMA Model by AIC. Let’s tabulate some AIC values for 
+ a range of different choices of p and q, assuming d takes 0 for `Return` 
+ while 1 for other 3 variables. Below shows the AIC table of fitting ARIMA 
+ on `Return` time series of stock: "ADANIPORTS". We will subset the last 120 
+ time series as test data.
+ 
+```{r aic, echo=FALSE, warning = FALSE,message = FALSE}
+aic_table <- function(ts, P, Q, d){ 
+  table <- matrix(NA, (P + 1), (Q + 1)) 
+  for(p in 0:P) { 
+    for(q in 0:Q) { 
+      table[p + 1, q + 1] <- arima(ts, order=c(p, d, q))$aic
+    } 
+  }
+  dimnames(table) <- list(paste("AR", 0:P, sep = ""), 
+                          paste("MA", 0:Q, sep = ""))
+  table
+}
+
+# Construct AIC table
+nifty_cand_ts = ts(nifty_cand[, -2]$Return, 
+                   frequency = 1, start = c(2000, 01, 03))
+nifty_aic_table <- aic_table(head(nifty_cand_ts, -30), 4, 4, 0) 
+
+tab.cap2 = '**Table 2**. *AIC for different ARIMA parameters*'
+nifty_aic_table %>%
+  knitr::kable(format = 'html', caption = tab.cap2) %>%
+  kableExtra::kable_styling('striped', full_width = TRUE) 
+
+
+```
+
+The AIC table suggests that ARIMA(4, 0, 4) is the best model for the return of 
+"ADANIPORTS". This model may give a sign that increasing p and q will tend to 
+get smaller AIC for a better fit. However, models with higher p and q are 
+more complex, so it may lead to problems like overfitting, numerical stability 
+and etc. We usually prefer a simply model, which also better for interpretation.
+
+Even though it is nice to view the change of AIC value as the change of 
+p and q, for a big dataset like this, it is very inefficient to iterate over 
+range of p and q. `auto.arima()`in the `forest` package is much faster in 
+generating the results. We can verify that `auto.arima()` also suggests 
+ARIMA(4, 0, 0) is the model with the best fit in the range of (1, 4) of p and q.
+
+```{r , warning=FALSE, message=FALSE}
+ts_arima <- auto.arima(head(nifty_cand_ts, -30), max.p = 4, 
+                      max.q = 4, max.d = 3)
+print(ts_arima)
+```
+
+### Forecasting using an ARIMA Model
+
+Lastly, we will forecast the next 120 time series and compare the result with 
+our test set.
+```{r acc, warning=FALSE, message=FALSE}
+ts_forecasts <- forecast(ts_arima, h = 30) 
+acc <- accuracy(ts_forecasts, head(tail(nifty_cand_ts, 30), 7))
+print(round(acc, 4))
+```
+The RMSE and MAE for the test set are 5.5276 and 4.5046, respectively.
+
+```{r forc_fig, warning=FALSE, fig.cap = fig.cap4, fig.height=4, fig.width=6.8}
+fig.cap4 = "**Figure 4.** *Forecasts from ARIMA(4, 0, 4) with zero mean.*"
+autoplot(ts_forecasts, main = "") + xlab("Day") + 
+  ylab("Return") +
+  theme_bw()
+```
+
+## Stata
+
+# Conclusion
+
+
+# References
+
+1. A modern Time Series tutorial:
+[Link](https://www.kaggle.com/rohanrao/a-modern-time-series-tutorial)
+
+2. ARIMA model in Wikipedia:
+[Link](https://en.wikipedia.org/wiki/Autoregressive_integrated_moving_average)
+
+
+
+
+
