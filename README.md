@@ -14,3 +14,13 @@ Proposal.md - Proposal document.
 ### Data
 
 NIFTY50_all.csv - The data used for the project.
+
+### Files
+
+R - R tutorial (by Chuwen Li)
+
+Stata - Stata tutorial (by Jialun Li)
+
+Python - Python tutorial (by Zhilin He)
+
+Report (Draft).Rmd - Draft report
