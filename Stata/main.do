@@ -50,11 +50,11 @@ use NIFTY_clean, clear
 keep if symbol == "ADANIPORTS"
 
 graph twoway line vwap date, color("blue") xtitle("Days") ytitle("Volume weighted average price")
-graph export vwap_data.png, replace
+graph export vwap_date.png, replace
 graph twoway line volume date, color("blue") xtitle("Days") ytitle("Volume")
-graph export vwap_data.png, replace
+graph export volume_date.png, replace
 graph twoway line turnover date, color("blue") xtitle("Days") ytitle("Turnover")
-graph export vwap_data.png, replace
+graph export turnover_date.png, replace
 
 
 // Model Selection (Mainly focus on 'vwap')

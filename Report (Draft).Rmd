@@ -380,7 +380,6 @@ replace symbol = "ZEEL" if symbol == "ZEETELE"
 
 * Save the cleaned data
 save NIFTY_clean, replace 
-
 ```
 
 Then we visualize the data and the stock "ADANIPORTS" is taken as an example.
@@ -398,6 +397,10 @@ graph twoway line turnover date, color("blue") xtitle("Days") ytitle("Turnover")
 graph export vwap_data.png, replace
 ```
 
+![ada_vwap](./Stata/vwap_date.png)
+![ada_vwap](./Stata/volume_date.png)
+![ada_vwap](./Stata/turnover_date.png)
+
 #### Determine model parameters
 
 We will use the time series VWAP for the analysis below.
@@ -406,7 +409,6 @@ For all stocks, we do Augmented Dickey-Fuller tests to determine whether the
 time series are stationary or not.
 
 ```{stata ADFtest_stata}
-
 use NIFTY_clean, clear
 
 foreach sym of local sbls {
@@ -437,13 +439,26 @@ foreach sym of local sbls_f8 {
 	use NIFTY_clean, clear
 	keep if symbol == "`sym'"
 	tsset date
-	ac vwap
+	ac D.vwap
 	graph export acf_`sym'.png
-	pac vwap
+	pac D.vwap
 	graph export pacf_`sym'.png
 }
-
 ```
+
+The PACF plots for the first 4 stocks are the following:
+![pacf_ADA](./Stata/acf&pacf/pacf_ADANIPORTS.png)
+![pacf_ASI](./Stata/acf&pacf/pacf_ASIANPAINT.png)
+![pacf_AXI](./Stata/acf&pacf/pacf_AXISBANK.png)
+![pacf_BAJ_A](./Stata/acf&pacf/pacf_BAJAJ-AUTO.png)
+
+And the ACF plots for the next 4 stocks are the following:
+
+![acf_BAJ_F](./Stata/acf&pacf/acf_BAJAJFINSV.png)
+![acf_BAJF](./Stata/acf&pacf/acf_BAJFINANCE.png)
+![acf_BHA](./Stata/acf&pacf/acf_BHARTIARTL.png)
+![acf_BPC](./Stata/acf&pacf/acf_BPCL.png)
+
 
 We can get the similar conclusion that lag 1 is absolutely significant while lag
 2 is not, hencewe can choose \(p=1\) for the AR term and \(q=1\) for the MA 
@@ -459,7 +474,6 @@ and then plot the predicted values against original values.
 Note: we will only plot the first 5 stocks as an example.
 
 ```{stata fitting, results = "hide"}
-
 use NIFTY_clean, clear
 
 local sbls_f5 = "ADANIPORTS ASIANPAINT AXISBANK BAJAJ-AUTO BAJAJFINSV"
@@ -491,9 +505,15 @@ foreach sym of local sbls_f5 {
 		graph export fitted_`sym'.png
 	}
 }
-
 ```
 
+The sample fitted graphs are:
+
+![fit_ADA](./Stata/FittedPlots/fitted_ADANIPORTS.png)
+![fit_ASI](./Stata/FittedPlots/fitted_ASIANPAINT.png)
+![fit_AXI](./Stata/FittedPlots/fitted_AXISBANK.png)
+![fit_BAJ_A](./Stata/FittedPlots/fitted_BAJAJ-AUTO.png)
+![fit_BAJ_F](./Stata/FittedPlots/fitted_BAJAJFINSV.png)
 #### Model improvement
 
 Now that we chose different models for different stocks, we can further
