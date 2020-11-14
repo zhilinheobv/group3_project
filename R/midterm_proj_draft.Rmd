@@ -27,7 +27,7 @@ nifty = readr::read_delim(sprintf('%s/NIFTY50_all.csv', url), delim = ',')
 
 # Introduction
 
-This project is a tutorial of using multivaraite time series analysis for the 
+This project is a tutorial of using multivariate time series analysis for the 
 stock market index, NIFTY 50 from NSE (National Stock Exchange) India. The 
 data is obtained from 
 [Nifty 50](https://www.kaggle.com/rohanrao/nifty50-stock-market-data) 
@@ -39,7 +39,7 @@ Integrated Moving Average (ARIMA) to time series data. ARIMA is able to fit
 a given non-seasonal non-stationary time series based on its lag values.
 A general ARIMA model consists of three parts: the "AR" part means the variable
 of interest is regressed on its lag terms, the "I" part means the differenced
-values are used, and the "MA" part means the regression error is modelled as a
+values are used, and the "MA" part means the regression error is modeled as a
 linear combination of error terms in the past. The purpose of using differenced
 terms is to make the time series stationary for autoregression.
 
@@ -165,8 +165,8 @@ after the outbreak of Coronavirus.
 We will focus on the variables: `Symbol`, `VWAP`, `Volume`, `Trades` and a 
 newly created variable `Return`, which is the difference between `Close` and 
 `Prev Close`. First we choose one stock to analyze its autocorrelation of 
-trend on theabove four variables. The trend plot above shows large value of 
-`Volume`, sowe can take log to decrease its trend.
+trend on the above four variables. The trend plot above shows large value of 
+`Volume`, so we can take log to decrease its trend.
 
 ```{r acf, warning = FALSE, message = FALSE, fig.cap = fig.cap2}
 library(forecast)
@@ -193,7 +193,7 @@ Notice that all the variables show high autocorrelation except for `Return`,
 which is because `Return` is calculated from the first difference of closing 
 price working as a linear filter applied to eliminate a trend. Since we are 
 going to apply ARIMA model to the data, which can works for non-stationary 
-time series, we can leave the model to detrend time seires. For the 
+time series, we can leave the model to detrend time series. For the 
 illustration purpose, we will take first difference of other three variables 
 and compare the autocorrelation plot to the previous one.
 
@@ -225,6 +225,7 @@ acf_diff_plot = function(df = nifty, sym = "ADANIPORTS") {
 fig.cap3 = "**Figure 3.** *ACF plots of first difference of time seires.*"
 acf_diff_plot(df = nifty, sym = candidate)
 ```
+
 
 ### Fitting an ARIMA Model
 
@@ -270,7 +271,7 @@ Even though it is nice to view the change of AIC value as the change of
 p and q, for a big dataset like this, it is very inefficient to iterate over 
 range of p and q. `auto.arima()`in the `forest` package is much faster in 
 generating the results. We can verify that `auto.arima()` also suggests 
-ARIMA(4, 0, 0) is the model with the best fit in the range of (1, 4) of p and q.
+ARIMA(4, 0, 4) is the model with the best fit in the range of (1, 4) of p and q.
 
 ```{r , warning=FALSE, message=FALSE}
 ts_arima <- auto.arima(head(nifty_cand_ts, -30), max.p = 4, 
@@ -287,14 +288,32 @@ ts_forecasts <- forecast(ts_arima, h = 30)
 acc <- accuracy(ts_forecasts, head(tail(nifty_cand_ts, 30), 7))
 print(round(acc, 4))
 ```
-The RMSE and MAE for the test set are 5.5276 and 4.5046, respectively.
+The RMSE and MAE for the test set are 5.5276 and 4.5046, respectively. 
+Furthermore, we could plot the residual plot of our forecast.
 
 ```{r forc_fig, warning=FALSE, fig.cap = fig.cap4, fig.height=4, fig.width=6.8}
-fig.cap4 = "**Figure 4.** *Forecasts from ARIMA(4, 0, 4) with zero mean.*"
+fig.cap4 = paste0("**Figure 4.** *Residual Plot of forecasts from ", 
+                  "ARIMA(4, 0, 4) with zero mean.*")
 autoplot(ts_forecasts, main = "") + xlab("Day") + 
-  ylab("Return") +
+  ylab("Residual") +
   theme_bw()
 ```
+Unfortunately, the residual plot does not appear normal. It suggests the 
+result is heavily tailed. As the ARIMA model that we applied takes the MLE 
+approach with moment assumptions, our data clearly do not hold the Gaussian 
+distribution. We can perform a `shapiro.test()` to check the normality of the 
+result residuals.
+
+```{r norm_test, warning = FALSE, message = FALSE}
+shapiro.test(resid(ts_arima)[0:5000])
+```
+
+The small p-value reject the null hypothesis that the residuals are normal. 
+One way to fix that is to take log-transform of the data, but `Return` 
+variable that has negative values is not applicable. Second way is to apply 
+the ARIMA model that fits t-distributed errors and not assume normality. 
+Third way is to use data segmentation that takes interventions into 
+consideration.
 
 ## Stata
 
