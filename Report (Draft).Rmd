@@ -148,22 +148,9 @@ From the trend of all stocks, we can see the time series exhibit
 non-stationarity. There was a substantial strike to the India stock market 
 after the outbreak of Coronavirus.
 
-## Core Example {.tabset .tabset-pills}
+## Data Cleaning {.tabset .tabset-pills}
 
 ### Python
-
-#### Set up
-
-The main packages used in this analysis are:
-
-  - `pandas`: For data cleaning and data frame mutations
-  - `numpy`: For numeric data processing
-  - `datetime`: For date format data processing
-  - `sklearn`: For missing data imputing
-  - `statsmodels` and `pmdarima`: For the main ARIMA model
-  - `matplotlib`: For making plots
-
-#### Data cleaning and visualization
 
 Firstly, we import the data.
 
@@ -202,6 +189,67 @@ imp = SimpleImputer()
 p = imp.fit_transform(df2)
 df1['%Deliverble'] = p[:, 10]
 ```
+
+### R
+
+
+
+### Stata
+
+Firstly, we import the data and do some data cleaning. We drop the variable 
+<code>\Trades</code> and <code>\%Deliverable</code>. Also, we transform the
+<code>\Date</code> variable from string type to date type to treat the whole
+data set as time series data set.
+
+```{stata import_cleanning_stata, results = "hide", eval=FALSE}
+import delimited NIFTY50_all.csv, clear
+
+* Data Cleaning
+gen date2 = date(date, "YMD")
+format date2 %tdCCYY-nn-dd
+drop date series
+drop trades deliverablevolume
+rename date2 date
+label variable date "Date"
+
+* Replace Symbol Names
+replace symbol = "ADANIPORTS" if symbol == "MUNDRAPORT"
+replace symbol = "AXISBANK" if symbol == "UTIBANK"
+replace symbol = "BAJFINANCE" if symbol == "BAJAUTOFIN"
+replace symbol = "BHARTIARTL" if symbol == "BHARTI"
+replace symbol = "HEROMOTOCO" if symbol == "HEROHONDA"
+replace symbol = "HINDALCO" if symbol == "HINDALC0"
+replace symbol = "HINDUNILVR" if symbol == "HINDLEVER"
+replace symbol = "INFY" if symbol == "INFOSYSTCH"
+replace symbol = "JSWSTEEL" if symbol == "JSWSTL"
+replace symbol = "KOTAKBANK" if symbol == "KOTAKMAH"
+replace symbol = "TATAMOTORS" if symbol == "TELCO"
+replace symbol = "TATASTEEL" if symbol == "TISCO"
+replace symbol = "UPL" if symbol == "UNIPHOS"
+replace symbol = "VEDL" if symbol == "SESAGOA"
+replace symbol = "VEDL" if symbol == "SSLT"
+replace symbol = "ZEEL" if symbol == "ZEETELE"
+
+* Save the cleaned data
+save NIFTY_clean, replace 
+```
+
+## Core Analysis {.tabset .tabset-pills}
+
+### Python
+
+#### Set up
+
+The main packages used in this analysis are:
+
+  - `pandas`: For data cleaning and data frame mutations
+  - `numpy`: For numeric data processing
+  - `datetime`: For date format data processing
+  - `sklearn`: For missing data imputing
+  - `statsmodels` and `pmdarima`: For the main ARIMA model
+  - `matplotlib`: For making plots
+
+#### Data visualization
 
 We can take a look at the data. Take the stock "ADANIPORTS" as an example.
 
@@ -546,47 +594,9 @@ autoplot(ts_forecasts, main = "") + xlab("Day") +
 
 ### Stata
 
-#### Data cleaning and visualization
+#### Data visualization
 
-Firstly, we import the data and do data cleanning. We drop the variable 
-<code>\Trades</code> and <code>\%Deliverable</code>. Also, we transform the
-<code>\Date</code> variable from string type to date type to treat the whole
-data set as time series data set.
-
-```{stata import_cleanning_stata, results = "hide", eval=FALSE}
-import delimited NIFTY50_all.csv, clear
-
-* Data Cleaning
-gen date2 = date(date, "YMD")
-format date2 %tdCCYY-nn-dd
-drop date series
-drop trades deliverablevolume
-rename date2 date
-label variable date "Date"
-
-* Replace Symbol Names
-replace symbol = "ADANIPORTS" if symbol == "MUNDRAPORT"
-replace symbol = "AXISBANK" if symbol == "UTIBANK"
-replace symbol = "BAJFINANCE" if symbol == "BAJAUTOFIN"
-replace symbol = "BHARTIARTL" if symbol == "BHARTI"
-replace symbol = "HEROMOTOCO" if symbol == "HEROHONDA"
-replace symbol = "HINDALCO" if symbol == "HINDALC0"
-replace symbol = "HINDUNILVR" if symbol == "HINDLEVER"
-replace symbol = "INFY" if symbol == "INFOSYSTCH"
-replace symbol = "JSWSTEEL" if symbol == "JSWSTL"
-replace symbol = "KOTAKBANK" if symbol == "KOTAKMAH"
-replace symbol = "TATAMOTORS" if symbol == "TELCO"
-replace symbol = "TATASTEEL" if symbol == "TISCO"
-replace symbol = "UPL" if symbol == "UNIPHOS"
-replace symbol = "VEDL" if symbol == "SESAGOA"
-replace symbol = "VEDL" if symbol == "SSLT"
-replace symbol = "ZEEL" if symbol == "ZEETELE"
-
-* Save the cleaned data
-save NIFTY_clean, replace 
-```
-
-Then we visualize the data and the stock "ADANIPORTS" is taken as an example.
+Firstly we visualize the data and the stock "ADANIPORTS" is taken as an example.
 
 ```{stata visualization_stata, results = "hide", eval=FALSE}
 use NIFTY_clean, clear
@@ -737,17 +747,13 @@ The sample fitted graphs are:
 Now that we chose different models for different stocks, we can further
 improve the models by choosing the most proper model for each stock.
 
-However, Stata does not have some similar funciton as <code>auto_arima</code> 
+However, Stata does not have some similar functions as <code>auto_arima</code> 
 to choose models automatically. Hence, we may related to other two languages (
 Python, R). Heavy and tedious computation is expected in Stata here.
 
-## To-do list
+## Summary
 
-  - Prune codes, work on warnings
-  - Add writings
-  - Wrap up the whole project, finish conclusion
 
-<!-- ## Conclusion -->
 
 ## References
 
