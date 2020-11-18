@@ -101,7 +101,7 @@ tab1 = data.frame(name = var_names,
 <details>
 <summary> **Click to see variable descriptions.** </summary>
 ```{r var_tab, echo = FALSE}
-tab.cap1 = '**Table 1**. *Varaibel descriptions of NIFTY 50 data*'
+tab.cap1 = '**Table 1**. Variable descriptions of NIFTY 50 data'
 col_names = c("Variable Name", "Variable Description")
 tab1 %>%
   knitr::kable(format = 'html',  col.names = col_names, caption = tab.cap1) %>%
@@ -136,7 +136,7 @@ summary(nifty[, -2])
 
 ```{r trend, warning = FALSE, fig.cap = fig.cap1, fig.width = 6.8}
 # plot trend of all stocks
-fig.cap1 = "**Figure 1.** *Daily trend of all stocks, 2000-2020.*"
+fig.cap1 = "**Figure 1.** Daily trend of all stocks, 2000-2020."
 nifty_ts = reshape2::melt(nifty[, -c(2)], id.vars = "Date")
 ggplot(nifty_ts, aes(x = Date, y = value)) + 
     geom_line(color="lightblue") + 
@@ -152,6 +152,17 @@ after the outbreak of Coronavirus.
 
 ### Python
 
+#### Set up
+
+The main packages used in this analysis are:
+
+  - `pandas`: For data cleaning and data frame mutations
+  - `numpy`: For numeric data processing
+  - `datetime`: For date format data processing
+  - `sklearn`: For missing data imputing
+  - `statsmodels` and `pmdarima`: For the main ARIMA model
+  - `matplotlib`: For making plots
+
 #### Data cleaning and visualization
 
 Firstly, we import the data.
@@ -159,19 +170,20 @@ Firstly, we import the data.
 ```{python import}
 import sys
 sys.path.append('/usr/local/lib/python3.8/site-packages')
+# Just to make sure the packages are loaded.
 import pandas as pd
 import numpy as np
 df = pd.read_csv('./NIFTY50_all.csv')
 ```
 
-The variable <code>Trades</code> has too many missing values, we can delete it.
+The variable <code>Trades</code> has 50\% missing values, we can delete it.
 We can delete redundant variables and impute <code>\%Deliverable</code> via
-Simple Imputation because the are not so many missing values. We also need to
-merge different symbols for the same stock.
+Simple Imputation because there are not so many missing values (about 7\%).
+We also need to merge different symbols for the same stock.
 
 ```{python cleaning}
-from datetime import datetime
-from sklearn.impute import SimpleImputer
+from datetime import datetime # Dealing with date format data
+from sklearn.impute import SimpleImputer # Impute data
 # Drop redundant variables and variables with too many missing values
 df['Date'] = [datetime.strptime(x, '%Y-%m-%d') for x in df['Date']]
 df1 = df.drop(['Trades', 'Deliverable Volume', 'Series'], axis=1)
@@ -193,8 +205,8 @@ df1['%Deliverble'] = p[:, 10]
 
 We can take a look at the data. Take the stock "ADANIPORTS" as an example.
 
-```{python visualization}
-import matplotlib.pyplot as plt
+```{python visualization, echo=T, results='hide'}
+import matplotlib.pyplot as plt # Plotting package in python
 names = df1['Symbol'].cat.categories
 example = df1[df1['Symbol'] == names[0]]
 fig, ax = plt.subplots(3, 1, figsize=(8, 8))
@@ -213,17 +225,21 @@ ax[2].set_ylabel('Turnover')
 ax[0].set_title('Time series plots of stock %s' % names[0])
 ```
 
+<center>**Figure 2.1**. Time series plots of example stocks</center>
+
 #### Determine model parameters
 
 We will use the time series VWAP for the analysis below.
 
 The differencing parameter \(d\) of the model can be determined by doing
 Augmented Dickey-Fuller tests, which can indicate whether the time series
-are stationary. 
+are stationary. See the reference for more details about ADF tests. The
+python packages `statsmodels.tsa` and `pmdarima.arima` are very helpful
+here.
 
 ```{python determine_d}
-from statsmodels.tsa.arima_model import ARIMA
-from pmdarima.arima.utils import ndiffs
+from statsmodels.tsa.arima_model import ARIMA 
+from pmdarima.arima.utils import ndiffs # ARIMA model packages
 # This function chooses the smallest d for the series to be stationary
 names = df1['Symbol'].cat.categories
 ls0 = []
@@ -254,6 +270,8 @@ for i in range(4):
     ax[i].set_title('PACF plot for stock %s' % names[i])
 ```
 
+<center>**Figure 2.2**. PACF plots for choosing p</center>
+
 Notice lag 1 is at least borderline significant in the plots for all stocks,
 but lag 2 is not significant. Therefore, we can choose \(p=1\) for all stocks.
 
@@ -268,6 +286,8 @@ for i in range(4):
     plot_acf(subdf['VWAP'].diff().dropna(), ax=ax[i])
     ax[i].set_title('ACF plot for stock %s' % names[i+4])
 ```
+
+<center>**Figure 2.3**. ACF plots for choosing q</center>
 
 Notice lag 1 is significant for most of the stocks but lag 2 is not. Therefore
 we can choose \(q=1\) for the MA term.
@@ -331,6 +351,8 @@ fig.tight_layout()
 fig
 ```
 
+<center>**Figure 2.4**. Prediction plots</center>
+
 We can also forecast future VWAPs using the chosen models. For example, we
 can forecast the average prices in the next 200 trading days after the time
 series.
@@ -352,9 +374,12 @@ for i in range(50):
     ax[i // 5, i % 5].set_xticks([])
 fig.tight_layout()
 ```
+
 ```{python forecast_results}
 fig
 ```
+
+<center>**Figure 2.5**. Forecast plots</center>
 
 Notice the confidence intervals are very wide, indicating it's not easy to
 forecast stock prices.
@@ -407,7 +432,7 @@ candidate = "ADANIPORTS"
 nifty_cand = nifty %>% filter(Symbol == candidate) %>% 
   mutate(Volume = log(Volume))
 vars_list = names(nifty_cand)[-c(1, 2)]
-fig.cap2 = "**Figure 2.** *ACF plots of stock: ADANIPORTS.*"
+fig.cap2 = "**Figure 3.1.** ACF plots of stock: ADANIPORTS."
 par(mfrow=c(2,2))
 for ( var in vars_list ) {
   df_ts = ts(nifty_cand[[var]], frequency = 1, start = c(2000, 01, 03))
@@ -449,7 +474,7 @@ acf_diff_plot = function(df = nifty, sym = "ADANIPORTS") {
 ```
 
 ```{r acf2, warning=FALSE, message=FALSE, fig.cap = fig.cap3}
-fig.cap3 = "**Figure 3.** *ACF plots of first difference of time seires.*"
+fig.cap3 = "**Figure 3.2.** ACF plots of first difference of time seires."
 acf_diff_plot(df = nifty, sym = candidate)
 ```
 
@@ -477,7 +502,7 @@ aic_table <- function(ts, P, Q, d){
 nifty_cand_ts = ts(nifty_cand[, -2]$Return, 
                    frequency = 1, start = c(2000, 01, 03))
 nifty_aic_table <- aic_table(head(nifty_cand_ts, -30), 4, 4, 0) 
-tab.cap2 = '**Table 2**. *AIC for different ARIMA parameters*'
+tab.cap2 = '**Table 2**. AIC for different ARIMA parameters'
 nifty_aic_table %>%
   knitr::kable(format = 'html', caption = tab.cap2) %>%
   kableExtra::kable_styling('striped', full_width = TRUE) 
@@ -513,7 +538,7 @@ print(round(acc, 4))
 The RMSE and MAE for the test set are 5.5276 and 4.5046, respectively.
 
 ```{r forc_fig, warning=FALSE, fig.cap = fig.cap4, fig.height=4, fig.width=6.8}
-fig.cap4 = "**Figure 4.** *Forecasts from ARIMA(4, 0, 4) with zero mean.*"
+fig.cap4 = "**Figure 3.3.** Forecasts from ARIMA(4, 0, 4) with zero mean."
 autoplot(ts_forecasts, main = "") + xlab("Day") + 
   ylab("Return") +
   theme_bw()
@@ -579,8 +604,11 @@ graph export vwap_data.png, replace
 ```
 
 ![ada_vwap](./Stata/vwap_date.png)
+
 ![ada_vwap](./Stata/volume_date.png)
 ![ada_vwap](./Stata/turnover_date.png)
+
+<center>**Figure 4.1**. Time series plots of ADANIPORTS</center>
 
 #### Determine model parameters
 
@@ -634,6 +662,8 @@ The PACF plots for the first 4 stocks are the following:
 ![pacf_AXI](./Stata/acf&pacf/pacf_AXISBANK.png)
 ![pacf_BAJ_A](./Stata/acf&pacf/pacf_BAJAJ-AUTO.png)
 
+<center>**Figure 4.2**. ACF and PACF plots of ADANIPORTS</center>
+
 And the ACF plots for the next 4 stocks are the following:
 
 ![acf_BAJ_F](./Stata/acf&pacf/acf_BAJAJFINSV.png)
@@ -641,6 +671,7 @@ And the ACF plots for the next 4 stocks are the following:
 ![acf_BHA](./Stata/acf&pacf/acf_BHARTIARTL.png)
 ![acf_BPC](./Stata/acf&pacf/acf_BPCL.png)
 
+<center>**Figure 4.3**. ACF and PACF plots for BAJ_F, BAJF, BHA, BPC</center>
 
 We can get the similar conclusion that lag 1 is absolutely significant while lag
 2 is not, hencewe can choose \(p=1\) for the AR term and \(q=1\) for the MA 
@@ -699,6 +730,8 @@ The sample fitted graphs are:
 ![fit_BAJ_A](./Stata/FittedPlots/fitted_BAJAJ-AUTO.png)
 ![fit_BAJ_F](./Stata/FittedPlots/fitted_BAJAJFINSV.png)
 
+<center>**Figure 4.4**. Fitted plots for the first 5 stocks</center>
+
 #### Model improvement
 
 Now that we chose different models for different stocks, we can further
@@ -723,3 +756,6 @@ Python, R). Heavy and tedious computation is expected in Stata here.
 
 2. ARIMA model in Wikipedia:
 [Link](https://en.wikipedia.org/wiki/Autoregressive_integrated_moving_average)
+
+3. ADF test in Wikipedia:
+[Link](https://en.wikipedia.org/wiki/Augmented_Dickey%E2%80%93Fuller_test)
