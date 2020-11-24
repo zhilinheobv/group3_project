@@ -6,8 +6,9 @@ date: "`r format.Date(Sys.Date(), '%B %d, %Y')`"
 output:
   html_document:
     toc: true
-    theme: flatly
+    toc_depth: 2
     toc_float: true
+    theme: flatly
 ---
 
 ```{r setup, include=FALSE}
@@ -30,7 +31,7 @@ url = 'https://raw.githubusercontent.com/lixx4228/Stats506_group3/main'
 nifty = readr::read_delim(sprintf('%s/NIFTY50_all.csv', url), delim = ',')
 ```
 
-## Introduction
+# Introduction
 
 This project is a tutorial of using multivaraite time series analysis for the 
 stock market index, NIFTY 50 from NSE (National Stock Exchange) India. The 
@@ -115,9 +116,9 @@ As we are more interested in the stock prices, we use the variable
 stock on a trading day. We want to catch the trend of stock prices across the
 years and possibly forecast future stock prices.
 
-## Data Cleaning {.tabset .tabset-pills}
+# Data Cleaning {.tabset .tabset-pills}
 
-### Python
+## Python
 
 Firstly, we import the data.
 
@@ -157,7 +158,19 @@ p = imp.fit_transform(df2)
 df1['%Deliverble'] = p[:, 10]
 ```
 
-### R
+## R
+
+Before conducting core analysis, let's clean our data and check basic 
+data structure.
+
+```{r}
+colnames(nifty)[colSums(is.na(nifty)) > 0]
+```
+
+As we can see, variables `Trade`, `Deliverable Volume`, and `%Deliverable`
+has missing values and we need to convert them to 0. Besides, we found 
+out that there are stocks that changed its names during 2000 to 
+2020 period, so we need to bring their names into accord.
 
 ```{r clean_data}
 library(dplyr)
@@ -181,30 +194,15 @@ nifty_clean = nifty %>%
 summary(nifty_clean)
 ```
 
-```{r trend, fig.cap = fig.cap1, fig.height = 6, fig.width = 6.8}
-# plot trend of all stocks
-fig.cap1 = "**Figure 1.** *Daily trend of all stocks, 2000-2020.*"
 
-nifty_ts = reshape2::melt(nifty_clean[, -c(2)], id.vars = "Date")
-ggplot(nifty_ts, aes(x = Date, y = value)) + 
-    geom_line(color= "deepskyblue4") + 
-    theme_bw() +
-    facet_wrap(~ variable, scales = "free_y", ncol = 1)
-
-```
-
-From the trend of all stocks, we can see the time series of  exhibit 
-non-stationarity. There was a substantial strike to the India stock market 
-after the outbreak of Coronavirus.
-
-### Stata
+## Stata
 
 Firstly, we import the data and do some data cleaning. We drop the variable 
 <code>\Trades</code> and <code>\%Deliverable</code>. Also, we transform the
 <code>\Date</code> variable from string type to date type to treat the whole
 data set as time series data set.
 
-```{stata import_cleanning_stata, results = "hide", eval=FALSE}
+```{stata import_cleanning_stata, eval=FALSE}
 import delimited NIFTY50_all.csv, clear
 
 * Data Cleaning
@@ -237,13 +235,13 @@ replace symbol = "ZEEL" if symbol == "ZEETELE"
 save NIFTY_clean, replace 
 ```
 
-## Core Analysis {.tabset .tabset-pills}
+# Core Analysis {.tabset .tabset-pills}
 
-### Python
+## Python
 
-#### Set up
+### Set up
 
-The main packages used in this analysis are:
+The main packages used in Python tutorial are:
 
   - `pandas`: For data cleaning and data frame mutations
   - `numpy`: For numeric data processing
@@ -252,7 +250,7 @@ The main packages used in this analysis are:
   - `statsmodels` and `pmdarima`: For the main ARIMA model
   - `matplotlib`: For making plots
 
-#### Data visualization
+### Data visualization
 
 We can take a look at the data. Take the stock "ADANIPORTS" as an example.
 
@@ -278,9 +276,9 @@ ax[0].set_title('Time series plots of stock %s' % names[0])
 
 <center>**Figure 2.1**. Time series plots of example stocks</center>
 
-#### Determine model parameters
+### Determine model parameters
 
-We will use the time series VWAP for the analysis below.
+Python tutorial will use the time series VWAP for the analysis below.
 
 The differencing parameter \(d\) of the model can be determined by doing
 Augmented Dickey-Fuller tests, which can indicate whether the time series
@@ -343,7 +341,7 @@ for i in range(4):
 Notice lag 1 is significant for most of the stocks but lag 2 is not. Therefore
 we can choose \(q=1\) for the MA term.
 
-#### Fit models
+### Fit models
 
 According to the process above, we choose the \(ARIMA(1, 1, 1)\) for all
 stocks. After fitting the models, we can view some of the summaries. Take the
@@ -386,7 +384,7 @@ for i in range(50):
 pd.value_counts(includema)
 ```
 
-#### Model diagnostics
+### Model diagnostics
 
 Firstly, we can use the in-sample lagged values to predict the time series.
 We can plot the prediction results for the first 5 stocks.
@@ -436,7 +434,7 @@ fig
 Notice the confidence intervals are very wide, indicating it's not easy to
 forecast stock prices.
 
-#### Model improvement
+### Model improvement
 
 Now that we chose different models for different stocks, we can further
 improve the models by choosing the most proper model for each stock.
@@ -468,12 +466,38 @@ m3.summary() # The chosen model was ARIMA(1, 1, 2), which is a good fit.
 We can improve each of the models invidivually for slightly better
 forecast performance.
 
-### R
+## R
 
-### ACF / PACF Plots 
+### Set up
 
-We will focus on the variables: `Symbol`, `VWAP`, `Volume`, `Trades` and the
-newly created variable `Return`. First we choose one stock "ADANIPORTS" to 
+The main packages used in R tutorial are:
+
+  - `dplyr`: For data programming
+  - `ggplot2`: For plots construction
+  - `gridExtra`: For plots alignments
+  - `forecast`: For fitting ARIMA model & forecast
+
+### Data visualization
+
+```{r trend, fig.cap = fig.cap1, fig.height = 6, fig.width = 6.8}
+# plot trend of all stocks
+fig.cap1 = "**Figure 1.** *Daily trend of all stocks, 2000-2020.*"
+nifty_ts = reshape2::melt(nifty_clean[, -c(2)], id.vars = "Date")
+ggplot(nifty_ts, aes(x = Date, y = value)) + 
+    geom_line(color= "deepskyblue4") + 
+    theme_bw() +
+    facet_wrap(~ variable, scales = "free_y", ncol = 1)
+```
+
+From the trend of all stocks, we can see the time series of  exhibit 
+non-stationarity. There was a substantial strike to the India stock market 
+after the outbreak of Coronavirus.
+
+### Determine model parameters 
+
+R tutorial will focus on the variables: `Symbol`, `VWAP`, `Volume`, `Trades` 
+and a newly created variable `Return`, which is the difference between `Close` 
+and `Prev Close`.. First we choose one stock "ADANIPORTS" to 
 analyze its ACF/PACF of trend on the above four variables. Normally, the 
 choice of p and q in ARIMA(p, d, q) depends on ACF/PACF plots. The trend plot 
 above shows huge volatility in `VWAP`, `Volume`, and `Turnover`, thus we can 
@@ -573,7 +597,7 @@ on the second lag, suggesting that ARIMA(2, 1, 2) might be suitable for
 like `Return` it is tricky to find p and q by ACF/PACF plots. As a result,
 we can use AIC as criteria to choose p and q.
 
-### Fitting an ARIMA Model
+### Fit models
 
 Let’s tabulate some AIC values for a range of different choices of p and q, 
 assuming d takes 0 for `Return` while 1 for other 3 variables. We will 
@@ -643,7 +667,7 @@ print(round(acc, 4))
 The RMSE and MAE for the test set are 19.0664 and 6.8923, respectively. 
 Furthermore, we could plot the residual plot of our forecast.
 
-```{r forc_fig, fig.cap = fig.cap4, fig.height = 3}
+```{r forc_fig, fig.cap = fig.cap4, fig.height = 3.1}
 fig.cap4 = "**Figure 5.** *Residual Diagnosis*"
 
 p1 = autoplot(ts_forecasts, main = "") + xlab("Day") + 
@@ -699,7 +723,7 @@ p2 = ggAcf(resid(ts_log_arima)) + ggtitle("ACF of residuals") +
 
 ```
   
-```{r resid_log, fig.height = 3, fig.cap = fig.cap6}
+```{r resid_log, fig.height = 3.1, fig.cap = fig.cap6}
 fig.cap6 = "**Figure 6.** *Residual Diagnosis of log returns.*"
 
 grid.arrange(p1, p2, ncol = 2)
@@ -712,13 +736,13 @@ about model forecasts, which appears to account for all available information,
 but prediction intervals that are computed assuming a normal distribution 
 may still be inaccurate.
 
-### Stata
+## Stata
 
-#### Data visualization
+### Data visualization
 
 Firstly we visualize the data and the stock "ADANIPORTS" is taken as an example.
 
-```{stata visualization_stata, results = "hide", eval=FALSE}
+```{stata visualization_stata, eval=FALSE}
 use NIFTY_clean, clear
 
 keep if symbol == "ADANIPORTS"
@@ -733,14 +757,17 @@ graph twoway line turnover date, color("blue") xtitle("Days") ///
 graph export vwap_data.png, replace
 ```
 
-![ada_vwap](./Stata/vwap_date.png)
 
-![ada_vwap](./Stata/volume_date.png)
-![ada_vwap](./Stata/turnover_date.png)
+```{r, echo=FALSE,out.width="49%", out.height="20%",fig.cap=cap, fig.show='hold', fig.align='center'}
+cap = "**Figure 4.1**. *Time series plots of ADANIPORTS*"
 
-<center>**Figure 4.1**. Time series plots of ADANIPORTS</center>
+knitr::include_graphics("./Stata/vwap_date.png")
+knitr::include_graphics("./Stata/volume_date.png")
+knitr::include_graphics("./Stata/turnover_date.png")
+``` 
 
-#### Determine model parameters
+
+### Determine model parameters
 
 We will use the time series VWAP for the analysis below.
 
@@ -787,27 +814,36 @@ foreach sym of local sbls_f8 {
 ```
 
 The PACF plots for the first 4 stocks are the following:
-![pacf_ADA](./Stata/acf&pacf/pacf_ADANIPORTS.png)
-![pacf_ASI](./Stata/acf&pacf/pacf_ASIANPAINT.png)
-![pacf_AXI](./Stata/acf&pacf/pacf_AXISBANK.png)
-![pacf_BAJ_A](./Stata/acf&pacf/pacf_BAJAJ-AUTO.png)
 
-<center>**Figure 4.2**. ACF and PACF plots of ADANIPORTS</center>
+```{r, echo=FALSE,out.width="49%", out.height="20%",fig.cap=cap, fig.show='hold', fig.align='center'}
+cap = "**Figure 4.2**. *ACF and PACF plots of ADANIPORTS*"
+
+knitr::include_graphics(c("./Stata/acf&pacf/pacf_ADANIPORTS.png",
+                          "./Stata/acf&pacf/pacf_ASIANPAINT.png"))
+
+knitr::include_graphics(c("./Stata/acf&pacf/pacf_AXISBANK.png",
+                          "./Stata/acf&pacf/pacf_BAJAJ-AUTO.png"))
+```
+
 
 And the ACF plots for the next 4 stocks are the following:
 
-![acf_BAJ_F](./Stata/acf&pacf/acf_BAJAJFINSV.png)
-![acf_BAJF](./Stata/acf&pacf/acf_BAJFINANCE.png)
-![acf_BHA](./Stata/acf&pacf/acf_BHARTIARTL.png)
-![acf_BPC](./Stata/acf&pacf/acf_BPCL.png)
+```{r, echo=FALSE,out.width="49%", out.height="20%",fig.cap="caption",fig.show='hold',fig.align='center'}
 
-<center>**Figure 4.3**. ACF and PACF plots for BAJ_F, BAJF, BHA, BPC</center>
+cap = "**Figure 4.3**. *ACF and PACF plots for BAJ_F, BAJF, BHA, BPC*" 
+  
+knitr::include_graphics(c("./Stata/acf&pacf/acf_BAJAJFINSV.png",
+                          "./Stata/acf&pacf/acf_BAJFINANCE.png"))
+
+knitr::include_graphics(c("./Stata/acf&pacf/acf_BHARTIARTL.png",
+                          "./Stata/acf&pacf/acf_BPCL.png"))
+```
 
 We can get the similar conclusion that lag 1 is absolutely significant while lag
 2 is not, hencewe can choose \(p=1\) for the AR term and \(q=1\) for the MA 
 term for all stocks.
 
-#### Fit models
+### Fit models
 
 According to the process above, we choose the \(ARIMA(1, 1, 1)\) for all
 stocks. However, diagnostics tells sometimes the \(ARIMA(1, 1, 0)\) performs
@@ -816,7 +852,7 @@ and then plot the predicted values against original values.
 
 Note: we will only plot the first 5 stocks as an example.
 
-```{stata fitting, results = "hide", eval=FALSE}
+```{stata fitting,  eval=FALSE}
 use NIFTY_clean, clear
 
 local sbls_f5 = "ADANIPORTS ASIANPAINT AXISBANK BAJAJ-AUTO BAJAJFINSV"
@@ -854,15 +890,20 @@ foreach sym of local sbls_f5 {
 
 The sample fitted graphs are:
 
-![fit_ADA](./Stata/FittedPlots/fitted_ADANIPORTS.png)
-![fit_ASI](./Stata/FittedPlots/fitted_ASIANPAINT.png)
-![fit_AXI](./Stata/FittedPlots/fitted_AXISBANK.png)
-![fit_BAJ_A](./Stata/FittedPlots/fitted_BAJAJ-AUTO.png)
-![fit_BAJ_F](./Stata/FittedPlots/fitted_BAJAJFINSV.png)
+```{r, echo=FALSE,out.width="49%", out.height="20%",fig.cap="caption",fig.show='hold',fig.align='center'}
 
-<center>**Figure 4.4**. Fitted plots for the first 5 stocks</center>
+cap = "**Figure 4.4**. *Fitted plots for the first 5 stocks*" 
+  
+knitr::include_graphics(c("./Stata/FittedPlots/fitted_ADANIPORTS.png",
+                          "./Stata/FittedPlots/fitted_ASIANPAINT.png"))
 
-#### Model improvement
+knitr::include_graphics(c("./Stata/FittedPlots/fitted_AXISBANK.png",
+                          "./Stata/FittedPlots/fitted_BAJAJ-AUTO.png"))
+
+knitr::include_graphics("./Stata/FittedPlots/fitted_BAJAJFINSV.png")
+```
+
+### Model improvement
 
 Now that we chose different models for different stocks, we can further
 improve the models by choosing the most proper model for each stock.
@@ -871,7 +912,7 @@ However, Stata does not have some similar functions as <code>auto_arima</code>
 to choose models automatically. Hence, we may related to other two languages (
 Python, R). Heavy and tedious computation is expected in Stata here.
 
-## onclusion
+# Conclusion
 
 To conclude, in this tutorial we covered applying ARIMA model to forecasting 
 stock related variables using Python, R and Stata. We also cross validate 
@@ -884,7 +925,7 @@ However, we should not blindly rely on automatic procedure. It is
 worthwhile to know how changes p, d and q affect the long-term forecasts as 
 well as prediction intervals.
 
-## References
+# References
 
 1. A modern Time Series tutorial:
 [Link](https://www.kaggle.com/rohanrao/a-modern-time-series-tutorial)
