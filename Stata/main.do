@@ -38,7 +38,6 @@ replace symbol = "VEDL" if symbol == "SESAGOA"
 replace symbol = "VEDL" if symbol == "SSLT"
 replace symbol = "ZEEL" if symbol == "ZEETELE"
 
-
 save NIFTY_clean, replace
 
 // Data Visualization --------------------------------------------------------*
@@ -49,26 +48,23 @@ use NIFTY_clean, clear
 
 keep if symbol == "ADANIPORTS"
 
-graph twoway line vwap date, color("blue") xtitle("Days") ytitle("Volume weighted average price")
+graph twoway line vwap date, color("blue") xtitle("Days") ///
+ytitle("Volume weighted average price")
 graph export vwap_date.png, replace
 graph twoway line volume date, color("blue") xtitle("Days") ytitle("Volume")
 graph export volume_date.png, replace
 graph twoway line turnover date, color("blue") xtitle("Days") ytitle("Turnover")
 graph export turnover_date.png, replace
 
-
 // Model Selection (Mainly focus on 'vwap')
-
 
 * Augmented Dickey-Fuller Test for all stocks
 
 use NIFTY_clean, clear
 
-levelsof(symbol), local(sbls)
+local sbls_f5 = "ADANIPORTS ASIANPAINT AXISBANK BAJAJ-AUTO BAJAJFINSV"
 
-global stocksymbols "EICHERMOT INFOSYSTCH NESTLEIND SHREECEM"
-
-foreach sym of local sbls {
+foreach sym of local sbls_f5 {
 	use NIFTY_clean, clear
 	keep if symbol == "`sym'"
 	tsset date
@@ -79,11 +75,7 @@ foreach sym of local sbls {
 
 use NIFTY_clean, clear
 
-levelsof(symbol), local(sbls)
-
-local sbls_f8 = "ADANIPORTS ASIANPAINT AXISBANK BAJAJ-AUTO BAJAJFINSV BAJFINANCE BHARTIARTL BPCL"
-
-foreach sym of local sbls_f8 {
+foreach sym of local sbls_f5 {
 	use NIFTY_clean, clear
 	keep if symbol == "`sym'"
 	tsset date
@@ -113,18 +105,27 @@ foreach sym of local sbls_f5 {
 	mat l_ai = r(S)
 	scalar aic_ai = l_aim[1,5]
 	if aic_aim > aic_ai {
+		tsappend, add(200)
 		arima vwap, arima(1,1,0)
-		predict vwap_p
-		gen vwap_p = vwap_pd + vwap
-		graph twoway line vwap date, lwidth("vthin") color("blue") || line vwap_p date, lwidth("vthin") color("red") lpattern("dash")
-		graph export fitted_`sym'.png
-	} 
-	else {
-		arima vwap, arima(1,1,1)
+		outreg2 using regout_`sym'.doc
 		predict vwap_pd
 		gen vwap_p = vwap_pd + vwap
-		graph twoway line vwap date, lwidth("vthin") color("blue") || line vwap_p date, lwidth("vthin") color("red") lpattern("dash")
-		graph export fitted_`sym'.png
+		replace vwap_p=vwap_p[_n-1]+ vwap_pd[_n] if _n > _N - 200
+		graph twoway line vwap date, lwidth("vthin") color("blue") ///
+		title("`sym'") || line vwap_p date, lwidth("vthin") color("red") ///
+		lpattern("dash")
+		graph export fitted_`sym'.png, replace
+	} 
+	else {
+		tsappend, add(200)
+		arima vwap, arima(1,1,1)
+		outreg2 using regout_`sym'.doc
+		predict vwap_pd
+		gen vwap_p = vwap_pd + vwap
+		replace vwap_p=vwap_p[_n-1]+ vwap_pd[_n] if _n > _N - 200
+		graph twoway line vwap date, lwidth("vthin") color("blue") /// 
+		title("`sym'") || line vwap_p date, lwidth("vthin") color("red") ///
+		lpattern("dash")
+		graph export fitted_`sym'.png, replace
 	}
 }
-
