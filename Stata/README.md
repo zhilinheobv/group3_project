@@ -12,10 +12,3 @@
 
   This part has been moved into the Rmarkdown session.
 
-### TODO List
-
-+ Add more comments / instructions in the source code.
-
-+ Fix the inconsistency problem with Python version (ACF and PACF results, arima results). 
-
-+ Polish the final presentation document (Add plots and comments).
