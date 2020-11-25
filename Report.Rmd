@@ -3,8 +3,8 @@ title: "Stats 506 F20, Group Project"
 subtitle: "ARIMA Model Tutorial"
 author: 
   - Zhilin He, zhilinhe@umich.edu
-  - Chuwen Li, @umich.edu
-  - Jialun Li, @umich.edu
+  - Chuwen Li, chuwenli@umich.edu
+  - Jialun Li, ljlstudy@umich.edu
 date: "`r format.Date(Sys.Date(), '%B %d, %Y')`"
 output:
   html_document:

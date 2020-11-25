@@ -25,4 +25,6 @@ Python - Python tutorial (by Zhilin He)
 
 ### Report
 
-Report.Rmd - Report
+Report.Rmd - Report source file
+
+Report.html - Report
