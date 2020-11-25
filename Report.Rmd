@@ -22,13 +22,9 @@ knitr::opts_chunk$set(echo = TRUE)
 #! Make sure all chunks have a label. This one is labelled 'setup'.
 ```
 
-```{r load_packages, include = FALSE}
-# this block loads R packages that may be needed for the analysis.
-library(dplyr)
-library(ggplot2)
-```
-
 ```{r load_data, include = FALSE}
+# for later usage
+library(dplyr, quietly = TRUE)
 # load data
 url = 'https://raw.githubusercontent.com/lixx4228/Stats506_group3/main'
 nifty = readr::read_delim(sprintf('%s/NIFTY50_all.csv', url), delim = ',')
@@ -46,15 +42,10 @@ contains price history and trading volumes of fifty stocks in India from
 We illustrates how to using Python, R, and Stata to apply Auto Regressive 
 Integrated Moving Average (ARIMA) to time series data. ARIMA is able to fit 
 a given non-seasonal non-stationary time series based on its lag values.
-A general ARIMA model consists of three parts: the "AR" part means the variable
-of interest is regressed on its lag terms, the "I" part means the differenced
-values are used, and the "MA" part means the regression error is modelled as a
-linear combination of error terms in the past. The purpose of using differenced
-terms is to make the time series stationary for autoregression.
 
 A general ARIMA model consists of three parts: the "AR" part means the variable
 of interest is regressed on its lag terms, the "I" part means the differenced
-values are used, and the "MA" part means the regression error is modelled as a
+values are used, and the "MA" part means the regression error is modeled as a
 linear combination of error terms in the past. The purpose of using differenced
 terms is to make the time series stationary for autoregression.
 
@@ -86,17 +77,17 @@ Detailed variable descriptions are shown in Table 1 below.
 # variable description
 var_names = names(nifty)
 var_names[16] = "Return"
-tab1 = data.frame(name = var_names, 
-                  description = 
-                    c("Date of trade", "Name of the company",
-                      "We have only one series: Equity(EQ)",
-                     "Previous day's close price", "Open price of day",
-                     "Highest price in day", "Lowest price in day",
-                     "Last traded price in day", "Close price of day",
-                     "Volume Weighted Average Price",
-                     "A measure of sellers versus buyers of a particular stock", 
-                     "The number of shares available for sale",
-                     "The number of shares traded", 
+t = data.frame(name = var_names, 
+               description = 
+                c("Date of trade", "Name of the company",
+                  "We have only one series: Equity(EQ)",
+                  "Previous day's close price", "Open price of day",
+                  "Highest price in day", "Lowest price in day",
+                  "Last traded price in day", "Close price of day",
+                  "Volume Weighted Average Price",
+                  "A measure of sellers versus buyers of a particular stock",
+                  "The number of shares available for sale",
+                  "The number of shares traded", 
                   "Shares which are actually transferred among demat accounts",
                   "Percent of deliverble volume",
                   "Return of trade"))
@@ -107,7 +98,7 @@ tab1 = data.frame(name = var_names,
 ```{r var_tab, echo = FALSE}
 tab.cap1 = '**Table 1**. Variable descriptions of NIFTY 50 data'
 col_names = c("Variable Name", "Variable Description")
-tab1 %>%
+t %>%
   knitr::kable(format = 'html',  col.names = col_names, caption = tab.cap1) %>%
   kableExtra::kable_styling('striped', full_width = TRUE) %>% 
   kableExtra::column_spec(1, italic = T) 
@@ -176,10 +167,8 @@ has missing values and we need to convert them to 0. Besides, we found
 out that there are stocks that changed its names during 2000 to 
 2020 period, so we need to bring their names into accord.
 
-```{r clean_data}
-library(dplyr)
-library(ggplot2)
-
+```{r clean_data, message=FALSE, warning=FALSE}
+library(dplyr, quietly = TRUE)
 # change old stock names to new
 old_name = c('MUNDRAPORT', 'UTIBANK', 'BAJAUTOFIN', 'BHARTI', 'HEROHONDA',
        'HINDALC0', 'HINDLEVER', 'INFOSYSTCH', 'JSWSTL', 'KOTAKMAH', 'TELCO',
@@ -480,6 +469,14 @@ The main packages used in R tutorial are:
   - `ggplot2`: For plots construction
   - `gridExtra`: For plots alignments
   - `forecast`: For fitting ARIMA model & forecast
+  
+```{r load_packages, warning=FALSE, message=FALSE}
+# this block loads R packages that may be needed for the analysis.
+library(dplyr, quietly = TRUE)
+library(ggplot2, quietly = TRUE)
+library(gridExtra, quietly = TRUE)
+library(forecast, quietly = TRUE)
+```
 
 ### Data visualization
 
@@ -511,8 +508,7 @@ package. You can choose to use `plot.acf()` under S3 method.
 
 
 ```{r acf, fig.cap = fig.cap2}
-library(gridExtra)
-library(forecast)
+fig.cap2 = "**Figure 2.2.** *ACF plots for stock: ADANIPORTS.*"
 
 candidate = "ADANIPORTS"
 vars_list = c("VWAP", "Volume", "Turnover", "Return")
@@ -522,8 +518,6 @@ nifty_cand = nifty_clean %>%
   mutate_at(vars(matches(c("VWAP", "Volume", "Turnover"))), log)
 
 # plot ACF
-fig.cap2 = "**Figure 2.2.** *ACF plots for stock: ADANIPORTS.*"
-
 acf_list = vector(mode = "list", length = length(vars_list))
 names(acf_list) = vars_list
 for ( var in vars_list ) {
@@ -951,7 +945,7 @@ our results with actual data and suggested a model improvement method. Even
 though we followed along the same time analysis procedure with ARIMA modeling, 
 we show different angles of tackling the problem. Among all three programming 
 language, Python and R are very powerful to model time series data with 
-implement `auto_arima()`/`auto.arima()` function which Selects appropriate 
+implemented `auto_arima()` / `auto.arima()` functions which selects appropriate
 values for p, d and q automatically. For Stata, determination of
 parameters is mostly based on looking at ACF/PACF plots with trial and error.
 However, we should not blindly rely on automatic procedure. It is 
