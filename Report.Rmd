@@ -754,13 +754,15 @@ graph twoway line turnover date, color("blue") xtitle("Days") ytitle("Turnover")
 graph export turnover_date.png, replace
 ```
 
-![ada_vwap](./Stata/vwap_date.png){width=300px}
+<center>
+![VWAP](./Stata/vwap_date.png){width=300px}
 
-![ada_volume](./Stata/volume_date.png){width=300px}
+![Volume](./Stata/volume_date.png){width=300px}
 
-![ada_date](./Stata/turnover_date.png){width=300px}
+![Turnover](./Stata/turnover_date.png){width=300px}
 
 **Figure 3.1**. Data visualization
+</center>
 
 ### Determine model parameters
 
@@ -810,31 +812,35 @@ foreach sym of local sbls_f5 {
 
 The PACF plots for these stocks are the following:
 
-![pacf_ADA](./Stata/acf&pacf/pacf_ADANIPORTS.png){width=300px}
+<center>
+![ADA](./Stata/acf&pacf/pacf_ADANIPORTS.png){width=300px}
 
-![pacf_ASI](./Stata/acf&pacf/pacf_ASIANPAINT.png){width=300px}
+![ASI](./Stata/acf&pacf/pacf_ASIANPAINT.png){width=300px}
 
-![pacf_AXI](./Stata/acf&pacf/pacf_AXISBANK.png){width=300px}
+![AXI](./Stata/acf&pacf/pacf_AXISBANK.png){width=300px}
 
-![pacf_BAJ_A](./Stata/acf&pacf/pacf_BAJAJ-AUTO.png){width=300px}
+![BAJA](./Stata/acf&pacf/pacf_BAJAJ-AUTO.png){width=300px}
 
-![pacf_BAJ_F](./Stata/acf&pacf/pacf_BAJAJFINSV.png){width=300px}
+![BAJF](./Stata/acf&pacf/pacf_BAJAJFINSV.png){width=300px}
 
 **Figure 3.2**. PACF plots
+</center>
 
 And the ACF plots for the these 5 stocks are the following:
 
-![acf_ADA](./Stata/acf&pacf/acf_ADANIPORTS.png){width=300px}
+<center>
+![ADA](./Stata/acf&pacf/acf_ADANIPORTS.png){width=300px}
 
-![acf_ASI](./Stata/acf&pacf/acf_ASIANPAINT.png){width=300px}
+![ASI](./Stata/acf&pacf/acf_ASIANPAINT.png){width=300px}
 
-![acf_AXI](./Stata/acf&pacf/acf_AXISBANK.png){width=300px}
+![AXI](./Stata/acf&pacf/acf_AXISBANK.png){width=300px}
 
-![acf_BAJ_A](./Stata/acf&pacf/acf_BAJAJ-AUTO.png){width=300px}
+![BAJA](./Stata/acf&pacf/acf_BAJAJ-AUTO.png){width=300px}
 
-![acf_BAJ_F](./Stata/acf&pacf/acf_BAJAJFINSV.png){width=300px}
+![BAJF](./Stata/acf&pacf/acf_BAJAJFINSV.png){width=300px}
 
 **Figure 3.3**. ACF plots
+</center>
 
 We can get the similar conclusion that lag 1 is absolutely significant while lag
 2 is not, hencewe can choose \(p=1\) for the AR term and \(q=1\) for the MA 
@@ -893,35 +899,37 @@ foreach sym of local sbls_f5 {
 The regression coefficient is the following:
 
 **ADANIPORTS**
-![reg_ADA](./Stata/ModelParameters/regout_ADANIPORTS.png){width=400px}
+![](./Stata/ModelParameters/regout_ADANIPORTS.png){width=400px}
 
 **ASIANPAINT**
-![reg_ASI](./Stata/ModelParameters/regout_ASIANPAINT.png){width=400px}
+![](./Stata/ModelParameters/regout_ASIANPAINT.png){width=400px}
 
 **AXISBANK**
-![reg_AXI](./Stata/ModelParameters/regout_AXISBANK.png){width=400px}
+![](./Stata/ModelParameters/regout_AXISBANK.png){width=400px}
 
 **BAJAJ-AUTO**
-![reg_BAJ_A](./Stata/ModelParameters/regout_BAJAJ-AUTO.png){width=400px}
+![](./Stata/ModelParameters/regout_BAJAJ-AUTO.png){width=400px}
 
 **BAJAJFINSV**
-![reg_BAJ_F](./Stata/ModelParameters/regout_BAJAJFINSV.png){width=400px}
+![](./Stata/ModelParameters/regout_BAJAJFINSV.png){width=400px}
 
 Also, the out-of-sample prediction is implemented here. we tried to predict the 
 tendency of the stoch price in next 200 trading days and he sample fitted graphs
 are:
 
-![fit_ADA](./Stata/FittedPlots/fitted_ADANIPORTS.png){width=400px}
+<center>
+![](./Stata/FittedPlots/fitted_ADANIPORTS.png){width=400px}
 
-![fit_ASI](./Stata/FittedPlots/fitted_ASIANPAINT.png){width=400px}
+![](./Stata/FittedPlots/fitted_ASIANPAINT.png){width=400px}
 
-![fit_AXI](./Stata/FittedPlots/fitted_AXISBANK.png){width=400px}
+![](./Stata/FittedPlots/fitted_AXISBANK.png){width=400px}
 
-![fit_BAJ_A](./Stata/FittedPlots/fitted_BAJAJ-AUTO.png){width=400px}
+![](./Stata/FittedPlots/fitted_BAJAJ-AUTO.png){width=400px}
 
-![fit_BAJ_F](./Stata/FittedPlots/fitted_BAJAJFINSV.png){width=400px}
+![](./Stata/FittedPlots/fitted_BAJAJFINSV.png){width=400px}
 
 **Figure 3.4**. Forecasting plots
+</center>
 
 ### Model improvement
 
