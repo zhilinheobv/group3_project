@@ -1,0 +1,21 @@
+{\rtf1\fs24
+\trowd\trgaph75\trleft-75\intbl\trqc\clbrdrt\brdrs\cellx1872\clbrdrt\brdrs\cellx3168\clbrdrt\brdrs\cellx4320\clbrdrt\brdrs\cellx5616
+\ql \cell\qc (1)\cell\qc (2)\cell\qc (3)\cell\row
+\trowd\trgaph75\trleft-75\trqc\cellx1872\cellx3168\cellx4320\cellx5616
+\trowd\trgaph75\trleft-75\trqc\clbrdrb\brdrs\cellx1872\clbrdrb\brdrs\cellx3168\clbrdrb\brdrs\cellx4320\clbrdrb\brdrs\cellx5616
+\ql VARIABLES\cell\qc vwap\cell\qc ARMA\cell\qc sigma\cell\row
+\trowd\trgaph75\trleft-75\trqc\cellx1872\cellx3168\cellx4320\cellx5616
+\ql \cell\qc \cell\qc \cell\qc \cell\row
+\ql L.ar\cell\qc \cell\qc -0.118\cell\qc \cell\row
+\ql \cell\qc \cell\qc (1.141)\cell\qc \cell\row
+\ql L.ma\cell\qc \cell\qc 0.154\cell\qc \cell\row
+\ql \cell\qc \cell\qc (1.142)\cell\qc \cell\row
+\ql Constant\cell\qc -0.00385\cell\qc \cell\qc 76.19***\cell\row
+\ql \cell\qc (4.372)\cell\qc \cell\qc (0.0796)\cell\row
+\ql \cell\qc \cell\qc \cell\qc \cell\row
+\trowd\trgaph75\trleft-75\trqc\trbrdrb\brdrs\clbrdrb\brdrs\cellx1872\clbrdrb\brdrs\cellx3168\clbrdrb\brdrs\cellx4320\clbrdrb\brdrs\cellx5616
+\ql Observations\cell\qc 3,940\cell\qc 3,940\cell\qc 3,940\cell\row
+\pard\qc
+Standard errors in parentheses\par
+*** p<0.01, ** p<0.05, * p<0.1\par
+}

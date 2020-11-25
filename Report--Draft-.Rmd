@@ -114,7 +114,8 @@ tab1 %>%
 As we are more interested in the stock prices, we use the variable
 <code>VWAP</code> for the most part. It can summarize the average price of the
 stock on a trading day. We want to catch the trend of stock prices across the
-years and possibly forecast future stock prices.
+years and possibly forecast future stock prices. We take the first 5 stocks
+(alphabetically) as an example in the analysis.
 
 # Data Cleaning {.tabset .tabset-pills}
 
@@ -197,12 +198,12 @@ summary(nifty_clean)
 
 ## Stata
 
-Firstly, we import the data and do some data cleaning. We drop the variable 
+We import the data and do some data cleaning. We drop the variable 
 <code>\Trades</code> and <code>\%Deliverable</code>. Also, we transform the
 <code>\Date</code> variable from string type to date type to treat the whole
 data set as time series data set.
 
-```{stata import_cleanning_stata, eval=FALSE}
+```{stata import_cleaning_stata, eval=FALSE}
 import delimited NIFTY50_all.csv, clear
 
 * Data Cleaning
@@ -740,7 +741,7 @@ may still be inaccurate.
 
 ### Data visualization
 
-Firstly we visualize the data and the stock "ADANIPORTS" is taken as an example.
+We visualize the data and the stock "ADANIPORTS" is taken as an example.
 
 ```{stata visualization_stata, eval=FALSE}
 use NIFTY_clean, clear
@@ -748,24 +749,19 @@ use NIFTY_clean, clear
 keep if symbol == "ADANIPORTS"
 
 graph twoway line vwap date, color("blue") xtitle("Days") ///
-  ytitle("Volume weighted average price")
-graph export vwap_data.png, replace
+ytitle("Volume weighted average price")
+graph export vwap_date.png, replace
 graph twoway line volume date, color("blue") xtitle("Days") ytitle("Volume")
-graph export vwap_data.png, replace
-graph twoway line turnover date, color("blue") xtitle("Days") ///
-  ytitle("Turnover")
-graph export vwap_data.png, replace
+graph export volume_date.png, replace
+graph twoway line turnover date, color("blue") xtitle("Days") ytitle("Turnover")
+graph export turnover_date.png, replace
 ```
 
+![ada_vwap](./Stata/vwap_date.png){width=300px}
 
-```{r, echo=FALSE,out.width="49%", out.height="20%",fig.cap=cap, fig.show='hold', fig.align='center'}
-cap = "**Figure 4.1**. *Time series plots of ADANIPORTS*"
+![ada_volume](./Stata/volume_date.png){width=300px}
 
-knitr::include_graphics("./Stata/vwap_date.png")
-knitr::include_graphics("./Stata/volume_date.png")
-knitr::include_graphics("./Stata/turnover_date.png")
-``` 
-
+![ada_date](./Stata/turnover_date.png){width=300px}
 
 ### Determine model parameters
 
@@ -777,7 +773,9 @@ time series are stationary or not.
 ```{stata ADFtest_stata, eval=FALSE}
 use NIFTY_clean, clear
 
-foreach sym of local sbls {
+local sbls_f5 = "ADANIPORTS ASIANPAINT AXISBANK BAJAJ-AUTO BAJAJFINSV"
+
+foreach sym of local sbls_f5 {
 	use NIFTY_clean, clear
 	keep if symbol == "`sym'"
 	tsset date
@@ -785,59 +783,55 @@ foreach sym of local sbls {
 }
 ```
 
-We do the test on the <code>\vwap</code> with the first-order differentiation.
+We do the test on the <code>vwap</code> with the first-order differentiation.
 All stocks are reporting minimum p-values, hence we decide to use \(d=1\) for 
 all stocks.
 
 Then, in order to find AR parameter \(p\) of the model, we generate the partial 
-autoregressive (PACF) plots together with autoregressive (ACF) plots.
+autoregressive (PACF) plots together with autoregressive (ACF) plots. Here, the 
+parameter \(p\) represents the number of lags of this model. We only consider 
+relationships for one variable and \(p\) variables beyond it. The MA parameter 
+\(q\) has exactly the same meaning as AR models. 
 
-Note: we will only plot the first 8 stocks as an example.
+Note: we will only plot the first 5 stocks as an example.
 
-```{stata pacf_acf, results = "hide", eval=FALSE}
+```{stata pacf_acf, eval=FALSE}
 use NIFTY_clean, clear
 
-levelsof(symbol), local(sbls)
-
-local sbls_f8 = "ADANIPORTS ASIANPAINT AXISBANK BAJAJ-AUTO BAJAJFINSV ///
-  BAJFINANCE BHARTIARTL BPCL"
-
-foreach sym of local sbls_f8 {
+foreach sym of local sbls_f5 {
 	use NIFTY_clean, clear
 	keep if symbol == "`sym'"
 	tsset date
-	ac D.vwap
+	ac vwap
 	graph export acf_`sym'.png
-	pac D.vwap
+	pac vwap
 	graph export pacf_`sym'.png
 }
 ```
 
-The PACF plots for the first 4 stocks are the following:
+The PACF plots for these stocks are the following:
 
-```{r, echo=FALSE,out.width="49%", out.height="20%",fig.cap=cap, fig.show='hold', fig.align='center'}
-cap = "**Figure 4.2**. *ACF and PACF plots of ADANIPORTS*"
+![pacf_ADA](./Stata/acf&pacf/pacf_ADANIPORTS.png){width=300px}
 
-knitr::include_graphics(c("./Stata/acf&pacf/pacf_ADANIPORTS.png",
-                          "./Stata/acf&pacf/pacf_ASIANPAINT.png"))
+![pacf_ASI](./Stata/acf&pacf/pacf_ASIANPAINT.png){width=300px}
 
-knitr::include_graphics(c("./Stata/acf&pacf/pacf_AXISBANK.png",
-                          "./Stata/acf&pacf/pacf_BAJAJ-AUTO.png"))
-```
+![pacf_AXI](./Stata/acf&pacf/pacf_AXISBANK.png){width=300px}
 
+![pacf_BAJ_A](./Stata/acf&pacf/pacf_BAJAJ-AUTO.png){width=300px}
 
-And the ACF plots for the next 4 stocks are the following:
+![pacf_BAJ_F](./Stata/acf&pacf/pacf_BAJAJFINSV.png){width=300px}
 
-```{r, echo=FALSE,out.width="49%", out.height="20%",fig.cap="caption",fig.show='hold',fig.align='center'}
+And the ACF plots for the these 5 stocks are the following:
 
-cap = "**Figure 4.3**. *ACF and PACF plots for BAJ_F, BAJF, BHA, BPC*" 
-  
-knitr::include_graphics(c("./Stata/acf&pacf/acf_BAJAJFINSV.png",
-                          "./Stata/acf&pacf/acf_BAJFINANCE.png"))
+![acf_ADA](./Stata/acf&pacf/acf_ADANIPORTS.png){width=300px}
 
-knitr::include_graphics(c("./Stata/acf&pacf/acf_BHARTIARTL.png",
-                          "./Stata/acf&pacf/acf_BPCL.png"))
-```
+![acf_ASI](./Stata/acf&pacf/acf_ASIANPAINT.png){width=300px}
+
+![acf_AXI](./Stata/acf&pacf/acf_AXISBANK.png){width=300px}
+
+![acf_BAJ_A](./Stata/acf&pacf/acf_BAJAJ-AUTO.png){width=300px}
+
+![acf_BAJ_F](./Stata/acf&pacf/acf_BAJAJFINSV.png){width=300px}
 
 We can get the similar conclusion that lag 1 is absolutely significant while lag
 2 is not, hencewe can choose \(p=1\) for the AR term and \(q=1\) for the MA 
@@ -845,14 +839,15 @@ term for all stocks.
 
 ### Fit models
 
-According to the process above, we choose the \(ARIMA(1, 1, 1)\) for all
+According to the process above, we choose the \(ARIMA(1, 1, 1)\) (where the 
+first parameter is \(p\) , the second is \(d\) and the third is \(p\)) for all
 stocks. However, diagnostics tells sometimes the \(ARIMA(1, 1, 0)\) performs
 better for some stocks. Hence, we try to use the better model to fit the data 
 and then plot the predicted values against original values.
 
 Note: we will only plot the first 5 stocks as an example.
 
-```{stata fitting,  eval=FALSE}
+```{stata fitting, eval=FALSE}
 use NIFTY_clean, clear
 
 local sbls_f5 = "ADANIPORTS ASIANPAINT AXISBANK BAJAJ-AUTO BAJAJFINSV"
@@ -870,53 +865,73 @@ foreach sym of local sbls_f5 {
 	mat l_ai = r(S)
 	scalar aic_ai = l_aim[1,5]
 	if aic_aim > aic_ai {
+		tsappend, add(200)
 		arima vwap, arima(1,1,0)
-		predict vwap_p
+		predict vwap_pd
 		gen vwap_p = vwap_pd + vwap
-		graph twoway line vwap date, lwidth("vthin") color("blue")///
-		  || line vwap_p date, lwidth("vthin") color("red") lpattern("dash")
-		graph export fitted_`sym'.png
+		replace vwap_p=vwap_p[_n-1]+ vwap_pd[_n] if _n > _N - 200
+		graph twoway line vwap date, lwidth("vthin") color("blue") || line ///
+		vwap_p date, lwidth("vthin") color("red") lpattern("dash")
+		graph export fitted_`sym'.png, replace
 	} 
 	else {
+		tsappend, add(200)
 		arima vwap, arima(1,1,1)
 		predict vwap_pd
 		gen vwap_p = vwap_pd + vwap
-		graph twoway line vwap date, lwidth("vthin") color("blue")///
-		  || line vwap_p date, lwidth("vthin") color("red") lpattern("dash")
-		graph export fitted_`sym'.png
+		replace vwap_p=vwap_p[_n-1]+ vwap_pd[_n] if _n > _N - 200
+		graph twoway line vwap date, lwidth("vthin") color("blue") || line ///
+		vwap_p date, lwidth("vthin") color("red") lpattern("dash")
+		graph export fitted_`sym'.png, replace
 	}
 }
 ```
 
-The sample fitted graphs are:
+The regression coefficient is the following:
 
-```{r, echo=FALSE,out.width="49%", out.height="20%",fig.cap="caption",fig.show='hold',fig.align='center'}
+**ADANIPORTS**
+![reg_ADA](./Stata/ModelParameters/regout_ADANIPORTS.png){width=400px}
 
-cap = "**Figure 4.4**. *Fitted plots for the first 5 stocks*" 
-  
-knitr::include_graphics(c("./Stata/FittedPlots/fitted_ADANIPORTS.png",
-                          "./Stata/FittedPlots/fitted_ASIANPAINT.png"))
+**ASIANPAINT**
+![reg_ASI](./Stata/ModelParameters/regout_ASIANPAINT.png){width=400px}
 
-knitr::include_graphics(c("./Stata/FittedPlots/fitted_AXISBANK.png",
-                          "./Stata/FittedPlots/fitted_BAJAJ-AUTO.png"))
+**AXISBANK**
+![reg_AXI](./Stata/ModelParameters/regout_AXISBANK.png){width=400px}
 
-knitr::include_graphics("./Stata/FittedPlots/fitted_BAJAJFINSV.png")
-```
+**BAJAJ-AUTO**
+![reg_BAJ_A](./Stata/ModelParameters/regout_BAJAJ-AUTO.png){width=400px}
+
+**BAJAJFINSV**
+![reg_BAJ_F](./Stata/ModelParameters/regout_BAJAJFINSV.png){width=400px}
+
+Also, the out-of-sample prediction is implemented here. we tried to predict the 
+tendency of the stoch price in next 200 trading days and he sample fitted graphs
+are:
+
+![fit_ADA](./Stata/FittedPlots/fitted_ADANIPORTS.png){width=400px}
+
+![fit_ASI](./Stata/FittedPlots/fitted_ASIANPAINT.png){width=400px}
+
+![fit_AXI](./Stata/FittedPlots/fitted_AXISBANK.png){width=400px}
+
+![fit_BAJ_A](./Stata/FittedPlots/fitted_BAJAJ-AUTO.png){width=400px}
+
+![fit_BAJ_F](./Stata/FittedPlots/fitted_BAJAJFINSV.png){width=400px}
 
 ### Model improvement
 
 Now that we chose different models for different stocks, we can further
 improve the models by choosing the most proper model for each stock.
 
-However, Stata does not have some similar functions as <code>auto_arima</code> 
+However, Stata does not have some similar funciton as <code>auto_arima</code> 
 to choose models automatically. Hence, we may related to other two languages (
 Python, R). Heavy and tedious computation is expected in Stata here.
 
 # Conclusion
 
 To conclude, in this tutorial we covered applying ARIMA model to forecasting 
-stock related variables using Python, R and Stata. We also cross validate 
-our results with actual data and suggest a model improvement method. Among
+stock related variables using Python, R and Stata. We also cross validated 
+our results with actual data and suggested a model improvement method. Among
 all three programming language, Python and R are very powerful to model time
 series data with implement auto_arima()/auto.arima() function which Selects
 appropriate values for p, d and q automatically. For Stata, determination of 
