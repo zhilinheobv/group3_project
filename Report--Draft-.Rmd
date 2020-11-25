@@ -164,7 +164,7 @@ df1['%Deliverble'] = p[:, 10]
 Before conducting core analysis, let's clean our data and check basic 
 data structure.
 
-```{r}
+```{r check_na}
 colnames(nifty)[colSums(is.na(nifty)) > 0]
 ```
 
@@ -480,9 +480,12 @@ The main packages used in R tutorial are:
 
 ### Data visualization
 
+```{r fig_cap1, echo = FALSE}
+fig.cap1 = "**Figure 1.** *Daily trend of all stocks, 2000-2020.*"
+```
+
 ```{r trend, fig.cap = fig.cap1, fig.height = 6, fig.width = 6.8}
 # plot trend of all stocks
-fig.cap1 = "**Figure 1.** *Daily trend of all stocks, 2000-2020.*"
 nifty_ts = reshape2::melt(nifty_clean[, -c(2)], id.vars = "Date")
 ggplot(nifty_ts, aes(x = Date, y = value)) + 
     geom_line(color= "deepskyblue4") + 
@@ -577,17 +580,21 @@ for ( var in vars_list ) {
 
 ```
 
-
-```{r acf2, fig.cap = fig.cap3}
+```{r fig_cap3, echo = FALSE}
 fig.cap3 = paste("**Figure 3.** *ACF plots for stock: ADANIPORTS.*",
                  "VWAP, Volume, and Trades have taken first difference.")
+```
+
+```{r acf2, fig.cap = fig.cap3}
 do.call("grid.arrange", c(acf_diff_list, ncol = 2))
 ```
 
-```{r pacf, fig.cap = fig.cap4}
+```{r fig_cap4, echo = FALSE}
 fig.cap4 = paste("**Figure 4.** *PACF plots for stock: ADANIPORTS.*",
                  "VWAP, Volume, and Trades have taken first difference.")
+```
 
+```{r pacf, fig.cap = fig.cap4}
 do.call("grid.arrange", c(pacf_list, ncol = 2))
 ```
 
@@ -605,7 +612,7 @@ assuming d takes 0 for `Return` while 1 for other 3 variables. We will
 subset the last 120 time series as test data. Below shows the AIC table of 
 fitting ARIMA on `Return` time series of stock: "ADANIPORTS".
  
-```{r aic}
+```{r aic,  warning = FALSE}
 aic_table = function(ts, P, Q, d){ 
   table = matrix(NA, (P + 1), (Q + 1)) 
   for(p in 0:P) { 
@@ -668,9 +675,11 @@ print(round(acc, 4))
 The RMSE and MAE for the test set are 19.0664 and 6.8923, respectively. 
 Furthermore, we could plot the residual plot of our forecast.
 
-```{r forc_fig, fig.cap = fig.cap4, fig.height = 3.1}
-fig.cap4 = "**Figure 5.** *Residual Diagnosis*"
+```{r fig_cap5, echo = FALSE}
+fig.cap5 = "**Figure 5.** *Residual Diagnosis*"
+```
 
+```{r forc_fig, fig.cap = fig.cap4, fig.height = 3.1}
 p1 = autoplot(ts_forecasts, main = "") + xlab("Day") + 
   ggtitle("Residuals of Forecast") +
   ylab("Return") +
@@ -700,7 +709,6 @@ Let's try to take log transformation for `Close` and `Prev Close` prior to
 calculating the `Return`.
 
 ```{r arima_log}
-
 nifty_cand = nifty %>% 
   filter(Symbol == candidate) %>% 
   mutate_at(vars(matches(c("Close", "Prev Close"))), log) %>% 
@@ -724,9 +732,11 @@ p2 = ggAcf(resid(ts_log_arima)) + ggtitle("ACF of residuals") +
 
 ```
   
-```{r resid_log, fig.height = 3.1, fig.cap = fig.cap6}
+```{r fig_cap6, echo = FALSE}
 fig.cap6 = "**Figure 6.** *Residual Diagnosis of log returns.*"
+```
 
+```{r resid_log, fig.height = 3.1, fig.cap = fig.cap6}
 grid.arrange(p1, p2, ncol = 2)
 ```
 
@@ -931,10 +941,12 @@ Python, R). Heavy and tedious computation is expected in Stata here.
 
 To conclude, in this tutorial we covered applying ARIMA model to forecasting 
 stock related variables using Python, R and Stata. We also cross validated 
-our results with actual data and suggested a model improvement method. Among
-all three programming language, Python and R are very powerful to model time
-series data with implement auto_arima()/auto.arima() function which Selects
-appropriate values for p, d and q automatically. For Stata, determination of 
+our results with actual data and suggested a model improvement method. Even 
+though we followed along the same time analysis procedure with ARIMA modeling, 
+we show different angles of tackling the problem. Among all three programming 
+language, Python and R are very powerful to model time series data with 
+implement `auto_arima()`/`auto.arima()` function which Selects appropriate 
+values for p, d and q automatically. For Stata, determination of 
 parameters is mostly based on looking at ACF/PACF plots with trial and error.
 However, we should not blindly rely on automatic procedure. It is 
 worthwhile to know how changes p, d and q affect the long-term forecasts as 
