@@ -23,8 +23,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r load_data, include = FALSE}
-# for later usage
-library(dplyr, quietly = TRUE)
 # load data
 url = 'https://raw.githubusercontent.com/lixx4228/Stats506_group3/main'
 nifty = readr::read_delim(sprintf('%s/NIFTY50_all.csv', url), delim = ',')
@@ -74,6 +72,7 @@ other relevant information for the "Nifty Fifty" stocks since January 2000.
 Detailed variable descriptions are shown in Table 1 below.
 
 ```{r description, echo = FALSE, warning = FALSE, message = FALSE}
+library(dplyr, quietly = TRUE)
 # variable description
 var_names = names(nifty)
 var_names[16] = "Return"
@@ -95,7 +94,7 @@ t = data.frame(name = var_names,
 
 <details>
 <summary> **Click to see variable descriptions.** </summary>
-```{r var_tab, echo = FALSE}
+```{r var_tab, echo = FALSE, message=FALSE, warning=FALSE}
 tab.cap1 = '**Table 1**. Variable descriptions of NIFTY 50 data'
 col_names = c("Variable Name", "Variable Description")
 t %>%
@@ -167,8 +166,7 @@ has missing values and we need to convert them to 0. Besides, we found
 out that there are stocks that changed its names during 2000 to 
 2020 period, so we need to bring their names into accord.
 
-```{r clean_data, message=FALSE, warning=FALSE}
-library(dplyr, quietly = TRUE)
+```{r clean_data}
 # change old stock names to new
 old_name = c('MUNDRAPORT', 'UTIBANK', 'BAJAUTOFIN', 'BHARTI', 'HEROHONDA',
        'HINDALC0', 'HINDLEVER', 'INFOSYSTCH', 'JSWSTL', 'KOTAKMAH', 'TELCO',
@@ -267,7 +265,7 @@ ax[2].set_ylabel('Turnover')
 ax[0].set_title('Time series plots of stock %s' % names[0])
 ```
 
-<center>**Figure 1.1**. Time series plots of example stocks</center>
+<center>**Figure 1.1**. Time series plots of ADANIPORTS</center>
 
 ### Determine model parameters
 
@@ -290,11 +288,11 @@ for i in names:
     # Select the rows for stock i
     ls0.append(ndiffs(subdf['VWAP'], test='adf'))
 ls0  # Most values are 1
-max(ls0) # We don't need 2-order differencing
+max(ls0) 
 ```
 
-In order to ensure all time series are stationary, we choose \(d=1\) for all
-stocks.
+Notice that we don't need 2-order differencing. In order to ensure all time
+series are stationary, we choose \(d=1\) for all stocks.
 
 The AR parameter \(p\) of the model can be determined by looking at Partial
 Autocorrelation plots. These plots indicate the correlation between the series
