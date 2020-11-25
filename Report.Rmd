@@ -110,6 +110,34 @@ stock on a trading day. We want to catch the trend of stock prices across the
 years and possibly forecast future stock prices. We take the first 5 stocks
 (alphabetically) as an example in the analysis.
 
+# Set Up {.tabset .tabset-pills}
+
+## Python
+
+The main packages used in Python tutorial are:
+
+  - `pandas`: For data cleaning and data frame mutations
+  - `numpy`: For numeric data processing
+  - `datetime`: For date format data processing
+  - `sklearn`: For missing data imputing
+  - `statsmodels` and `pmdarima`: For the main ARIMA model
+  - `matplotlib`: For making plots
+
+## R
+
+The main packages used in R tutorial are:
+
+  - `dplyr`: For data programming
+  - `ggplot2`: For plots construction
+  - `gridExtra`: For plots alignments
+  - `forecast`: For fitting ARIMA model & forecast
+
+## Stata
+
+The main package used in Stata tutorial is:
+
+  - `outreg2`: For outputing results
+  
 # Data Cleaning {.tabset .tabset-pills}
 
 ## Python
@@ -128,7 +156,10 @@ df = pd.read_csv('./NIFTY50_all.csv')
 The variable <code>Trades</code> has 50\% missing values, we can delete it.
 We can delete redundant variables and impute <code>\%Deliverable</code> via
 Simple Imputation because there are not so many missing values (about 7\%).
-We also need to merge different symbols for the same stock.
+
+We also need to merge different symbols for the same stock. Notice that there
+are many stocks that have changed names during the time period. So we should
+change the old names to the new names.
 
 ```{python cleaning}
 from datetime import datetime # Dealing with date format data
@@ -136,6 +167,7 @@ from sklearn.impute import SimpleImputer # Impute data
 # Drop redundant variables and variables with too many missing values
 df['Date'] = [datetime.strptime(x, '%Y-%m-%d') for x in df['Date']]
 df1 = df.drop(['Trades', 'Deliverable Volume', 'Series'], axis=1)
+# Merge symbols referring to the same stock
 ls1 = ['MUNDRAPORT', 'UTIBANK', 'BAJAUTOFIN', 'BHARTI', 'HEROHONDA',
        'HINDALC0', 'HINDLEVER', 'INFOSYSTCH', 'JSWSTL', 'KOTAKMAH', 'TELCO',
        'TISCO', 'UNIPHOS', 'SESAGOA', 'SSLT', 'ZEETELE']
@@ -230,20 +262,9 @@ save NIFTY_clean, replace
 
 ## Python
 
-### Set up
+### Data Visualization
 
-The main packages used in Python tutorial are:
-
-  - `pandas`: For data cleaning and data frame mutations
-  - `numpy`: For numeric data processing
-  - `datetime`: For date format data processing
-  - `sklearn`: For missing data imputing
-  - `statsmodels` and `pmdarima`: For the main ARIMA model
-  - `matplotlib`: For making plots
-
-### Data visualization
-
-We can take a look at the data. Take the stock "ADANIPORTS" as an example.
+Firstly, take a look at the data. Take the stock "ADANIPORTS" as an example.
 
 ```{python visualization, echo=T, results='hide'}
 import matplotlib.pyplot as plt # Plotting package in python
@@ -267,7 +288,7 @@ ax[0].set_title('Time series plots of stock %s' % names[0])
 
 <center>**Figure 1.1**. Time series plots of ADANIPORTS</center>
 
-### Determine model parameters
+### Determine Model Parameters
 
 Python tutorial will use the time series VWAP for the analysis below.
 
@@ -332,7 +353,7 @@ for i in range(4):
 Notice lag 1 is significant for most of the stocks but lag 2 is not. Therefore
 we can choose \(q=1\) for the MA term.
 
-### Fit models
+### Fit Models
 
 According to the process above, we choose the \(ARIMA(1, 1, 1)\) for all
 stocks. After fitting the models, we can view some of the summaries. Take the
@@ -375,7 +396,7 @@ for i in range(50):
 pd.value_counts(includema)
 ```
 
-### Model diagnostics
+### Model Diagnostics
 
 Firstly, we can use the in-sample lagged values to predict the time series.
 We can plot the prediction results for the first 5 stocks.
@@ -425,7 +446,7 @@ fig
 Notice the confidence intervals are very wide, indicating it's not easy to
 forecast stock prices.
 
-### Model improvement
+### Model Improvement
 
 Now that we chose different models for different stocks, we can further
 improve the models by choosing the most proper model for each stock.
@@ -459,24 +480,15 @@ forecast performance.
 
 ## R
 
-### Set up
+### Data Visualization
 
-The main packages used in R tutorial are:
-
-  - `dplyr`: For data programming
-  - `ggplot2`: For plots construction
-  - `gridExtra`: For plots alignments
-  - `forecast`: For fitting ARIMA model & forecast
-  
 ```{r load_packages, warning=FALSE, message=FALSE}
-# this block loads R packages that may be needed for the analysis.
+# This block loads R packages that may be needed for the analysis.
 library(dplyr, quietly = TRUE)
 library(ggplot2, quietly = TRUE)
 library(gridExtra, quietly = TRUE)
 library(forecast, quietly = TRUE)
 ```
-
-### Data visualization
 
 ```{r trend, fig.cap = fig.cap1, fig.height = 6, fig.width = 6.8}
 fig.cap1 = "**Figure 2.1.** *Daily trend of all stocks, 2000-2020.*"
@@ -492,7 +504,7 @@ From the trend of all stocks, we can see the time series of  exhibit
 non-stationarity. There was a substantial strike to the India stock market 
 after the outbreak of Coronavirus.
 
-### Determine model parameters 
+### Determine Model Parameters 
 
 R tutorial will focus on the variables: `Symbol`, `VWAP`, `Volume`, `Trades` 
 and a newly created variable `Return`, which is the difference between `Close` 
@@ -593,7 +605,7 @@ on the second lag, suggesting that ARIMA(2, 1, 2) might be suitable for
 like `Return` it is tricky to find p and q by ACF/PACF plots. As a result,
 we can use AIC as criteria to choose p and q.
 
-### Fit models
+### Fit Models
 
 Let’s tabulate some AIC values for a range of different choices of p and q, 
 assuming d takes 0 for `Return` while 1 for other 3 variables. We will 
@@ -734,7 +746,7 @@ may still be inaccurate.
 
 ## Stata
 
-### Data visualization
+### Data Visualization
 
 We visualize the data and the stock "ADANIPORTS" is taken as an example.
 
@@ -762,7 +774,7 @@ graph export turnover_date.png, replace
 **Figure 3.1**. Data visualization
 </center>
 
-### Determine model parameters
+### Determine Model Parameters
 
 We will use the time series VWAP for the analysis below.
 
@@ -844,7 +856,7 @@ We can get the similar conclusion that lag 1 is absolutely significant while lag
 2 is not, hencewe can choose \(p=1\) for the AR term and \(q=1\) for the MA 
 term for all stocks.
 
-### Fit models
+### Fit Models
 
 According to the process above, we choose the \(ARIMA(1, 1, 1)\) (where the 
 first parameter is \(p\) , the second is \(d\) and the third is \(p\)) for all
@@ -929,7 +941,7 @@ are:
 **Figure 3.4**. Forecasting plots
 </center>
 
-### Model improvement
+### Model Improvement
 
 Now that we chose different models for different stocks, we can further
 improve the models by choosing the most proper model for each stock.
@@ -954,8 +966,8 @@ language, Python and R are very powerful to model time series data with
 implemented `auto_arima()` / `auto.arima()` functions which selects appropriate
 values for p, d and q automatically. For Stata, determination of
 parameters is mostly based on looking at ACF/PACF plots with trial and error.
-However, we should not blindly rely on automatic procedure. It is 
-worthwhile to know how changes p, d and q affect the long-term forecasts as 
+However, we should not blindly rely on automatic procedures. It is 
+worthwhile to know how changing p, d and q affects the long-term forecasts as 
 well as prediction intervals.
 
 All 3 languages can produce plots visualizing the results fairly easily. But
